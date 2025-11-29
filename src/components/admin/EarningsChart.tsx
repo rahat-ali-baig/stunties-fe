@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     AreaChart,
     Area,
@@ -11,6 +11,13 @@ import {
     ResponsiveContainer
 } from 'recharts';
 import { Eye, EyeOff } from 'lucide-react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 interface EarningsData {
     month: string;
@@ -25,16 +32,55 @@ interface EarningsChartProps {
     timeRange?: string;
 }
 
-const EarningsChart: React.FC<EarningsChartProps> = ({
-    data = defaultData,
-    timeRange = "30 days"
-}) => {
+const EarningsChart: React.FC<EarningsChartProps> = ({ timeRange = "30 days" }) => {
+    const [selectedTimeRange, setSelectedTimeRange] = useState(timeRange);
     const [visibleCharts, setVisibleCharts] = useState({
         revenue: true,
         organic: true,
         referrals: true,
         direct: true
     });
+
+    const chartData = useMemo(() => {
+        const generateRandomData = (base: number, variance: number) =>
+            Math.max(0, base + (Math.random() - 0.5) * variance * 2);
+
+        const timeRanges = {
+            "7 days": {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                baseRevenue: 20000,
+                variance: 8000
+            },
+            "30 days": {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                baseRevenue: 25000,
+                variance: 15000
+            },
+            "90 days": {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                baseRevenue: 35000,
+                variance: 25000
+            }
+        };
+
+        const rangeConfig = timeRanges[selectedTimeRange as keyof typeof timeRanges] || timeRanges["30 days"];
+
+        return rangeConfig.labels.map((label, index) => {
+            const base = rangeConfig.baseRevenue + (index * rangeConfig.variance * 0.3);
+            const revenue = generateRandomData(base, rangeConfig.variance);
+            const organic = generateRandomData(revenue * 0.3, revenue * 0.1);
+            const referrals = generateRandomData(revenue * 0.25, revenue * 0.08);
+            const direct = generateRandomData(revenue * 0.45, revenue * 0.12);
+
+            return {
+                month: label,
+                revenue: Math.round(revenue),
+                organic: Math.round(organic),
+                referrals: Math.round(referrals),
+                direct: Math.round(direct)
+            };
+        });
+    }, [selectedTimeRange]);
 
     const toggleChart = (chart: keyof typeof visibleCharts) => {
         setVisibleCharts(prev => ({
@@ -44,69 +90,76 @@ const EarningsChart: React.FC<EarningsChartProps> = ({
     };
 
     return (
-        <div className="py-6">
+        <div className="py-8">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h2 className="text-lg font-medium text-foreground">Earnings Overview</h2>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <h2 className="text-lg xl:text-xl font-medium text-foreground font-coolvetica">Earnings Overview</h2>
+                    <p className="text-sm text-foreground/40 mt-1">
                         Total revenue and breakdown by source
                     </p>
                 </div>
-                <div className="px-3 py-1 bg-muted rounded-full text-sm text-muted-foreground">
-                    {timeRange}
-                </div>
+                <Select value={selectedTimeRange} onValueChange={setSelectedTimeRange}>
+                    <SelectTrigger className="w-[120px] border-border/20 bg-transparent">
+                        <SelectValue placeholder="Select time range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="7 days">7 days</SelectItem>
+                        <SelectItem value="30 days">30 days</SelectItem>
+                        <SelectItem value="90 days">90 days</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
             <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" className={'border-0! outline-none! '} >
                     <AreaChart
-                        data={data}
+                        data={chartData}
                         margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                     >
                         <defs>
                             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1} />
+                                <stop offset="5%" stopColor="#D7FF66" stopOpacity={0.4} />
+                                <stop offset="95%" stopColor="#D7FF66" stopOpacity={0} />
                             </linearGradient>
                             <linearGradient id="colorOrganic" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.1} />
+                                <stop offset="5%" stopColor="#AAF7FF" stopOpacity={0.4} />
+                                <stop offset="95%" stopColor="#AAF7FF" stopOpacity={0} />
                             </linearGradient>
                             <linearGradient id="colorReferrals" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#ffc658" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#ffc658" stopOpacity={0.1} />
+                                <stop offset="5%" stopColor="#E3E3E3" stopOpacity={0.4} />
+                                <stop offset="95%" stopColor="#E3E3E3" stopOpacity={0} />
                             </linearGradient>
                             <linearGradient id="colorDirect" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#ff8042" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#ff8042" stopOpacity={0.1} />
+                                <stop offset="5%" stopColor="#ffff00" stopOpacity={0.4} />
+                                <stop offset="95%" stopColor="#ffff00" stopOpacity={0} />
                             </linearGradient>
                         </defs>
-                        
+
                         {/* Only show Y and X axis lines */}
-                        <CartesianGrid 
-                            horizontal={false} 
+                        <CartesianGrid
+                            horizontal={false}
                             vertical={false}
-                            stroke="hsl(var(--border))"
+                            stroke="#D7FF66"
                         />
-                        
+
                         <XAxis
                             dataKey="month"
-                            axisLine={{ stroke: 'hsl(var(--border))' }}
+                            axisLine={{ stroke: '#E3E3E330' }}
                             tickLine={false}
-                            tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
+                            tick={{ fill: '#FFFFFF60', fontSize: 12 }}
                         />
                         <YAxis
-                            axisLine={{ stroke: 'hsl(var(--border))' }}
+                            axisLine={{ stroke: '#E3E3E330' }}
                             tickLine={false}
-                            tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
+                            tick={{ fill: '#FFFFFF60', fontSize: 12 }}
                             tickFormatter={(value) => `$${value / 1000}k`}
                         />
-                        
+
                         <Tooltip
                             content={({ active, payload, label }) => {
                                 if (active && payload && payload.length) {
                                     return (
-                                        <div className="bg-background border border-border rounded-lg p-3 shadow-lg outline-none border-none ring-0">
+                                        <div className="bg-background border border-border/10 rounded-lg p-3 shadow-lg outline-none border-none ring-0">
                                             <p className="font-medium text-foreground mb-2">{label}</p>
                                             {payload.map((entry, index) => (
                                                 <p key={index} className="text-sm text-foreground" style={{ color: entry.color }}>
@@ -119,17 +172,17 @@ const EarningsChart: React.FC<EarningsChartProps> = ({
                                 return null;
                             }}
                         />
-                        
+
                         {/* Conditionally render areas based on visibility */}
                         {visibleCharts.direct && (
                             <Area
                                 type="monotone"
                                 dataKey="direct"
                                 stackId="1"
-                                stroke="#ff8042"
+                                stroke="#ffff0060"
                                 fill="url(#colorDirect)"
                                 name="Direct Sales"
-                                strokeWidth={2}
+                                strokeWidth={1}
                             />
                         )}
                         {visibleCharts.referrals && (
@@ -137,10 +190,10 @@ const EarningsChart: React.FC<EarningsChartProps> = ({
                                 type="monotone"
                                 dataKey="referrals"
                                 stackId="1"
-                                stroke="#ffc658"
+                                stroke="#E3E3E360"
                                 fill="url(#colorReferrals)"
                                 name="Referrals"
-                                strokeWidth={2}
+                                strokeWidth={1}
                             />
                         )}
                         {visibleCharts.organic && (
@@ -148,10 +201,10 @@ const EarningsChart: React.FC<EarningsChartProps> = ({
                                 type="monotone"
                                 dataKey="organic"
                                 stackId="1"
-                                stroke="#82ca9d"
+                                stroke="#AAF7FF60"
                                 fill="url(#colorOrganic)"
                                 name="Organic"
-                                strokeWidth={2}
+                                strokeWidth={1}
                             />
                         )}
                         {visibleCharts.revenue && (
@@ -159,10 +212,10 @@ const EarningsChart: React.FC<EarningsChartProps> = ({
                                 type="monotone"
                                 dataKey="revenue"
                                 stackId="1"
-                                stroke="#8884d8"
+                                stroke="#D7FF6660"
                                 fill="url(#colorRevenue)"
                                 name="Total Revenue"
-                                strokeWidth={2}
+                                strokeWidth={1}
                             />
                         )}
                     </AreaChart>
@@ -173,47 +226,43 @@ const EarningsChart: React.FC<EarningsChartProps> = ({
             <div className="flex justify-center gap-6 mt-4">
                 <button
                     onClick={() => toggleChart('revenue')}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${
-                        visibleCharts.revenue 
-                            ? 'bg-[#8884d8] text-white border-[#8884d8]' 
-                            : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
-                    }`}
+                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${visibleCharts.revenue
+                        ? 'bg-primary/5 text-white border-primary/10'
+                        : 'border-border/10 opacity-50'
+                        }`}
                 >
                     {visibleCharts.revenue ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                     <span className="text-xs">Total Revenue</span>
                 </button>
-                
+
                 <button
                     onClick={() => toggleChart('organic')}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${
-                        visibleCharts.organic 
-                            ? 'bg-[#82ca9d] text-white border-[#82ca9d]' 
-                            : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
-                    }`}
+                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${visibleCharts.organic
+                        ? 'bg-[#AAF7FF]/5 text-white border-[#AAF7FF]/10'
+                        : 'border-border/10 opacity-50'
+                        }`}
                 >
                     {visibleCharts.organic ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                     <span className="text-xs">Organic</span>
                 </button>
-                
+
                 <button
                     onClick={() => toggleChart('referrals')}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${
-                        visibleCharts.referrals 
-                            ? 'bg-[#ffc658] text-white border-[#ffc658]' 
-                            : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
-                    }`}
+                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${visibleCharts.referrals
+                        ? 'bg-[#E3E3E3]/5 text-white border-[#E3E3E3]/10'
+                        : 'border-border/10 opacity-50'
+                        }`}
                 >
                     {visibleCharts.referrals ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                     <span className="text-xs">Referrals</span>
                 </button>
-                
+
                 <button
                     onClick={() => toggleChart('direct')}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${
-                        visibleCharts.direct 
-                            ? 'bg-[#ff8042] text-white border-[#ff8042]' 
-                            : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
-                    }`}
+                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${visibleCharts.direct
+                        ? 'bg-[#ffff00]/5 text-white border-[#ffff00]/10'
+                        : 'border-border/10 opacity-50'
+                        }`}
                 >
                     {visibleCharts.direct ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                     <span className="text-xs">Direct Sales</span>
@@ -222,14 +271,5 @@ const EarningsChart: React.FC<EarningsChartProps> = ({
         </div>
     );
 };
-
-const defaultData: EarningsData[] = [
-    { month: 'Jan', revenue: 15000, organic: 5000, referrals: 4000, direct: 6000 },
-    { month: 'Feb', revenue: 25000, organic: 8000, referrals: 7000, direct: 10000 },
-    { month: 'Mar', revenue: 35000, organic: 12000, referrals: 9000, direct: 14000 },
-    { month: 'Apr', revenue: 45000, organic: 15000, referrals: 12000, direct: 18000 },
-    { month: 'May', revenue: 55000, organic: 18000, referrals: 15000, direct: 22000 },
-    { month: 'Jun', revenue: 65000, organic: 22000, referrals: 18000, direct: 25000 },
-];
 
 export default EarningsChart;

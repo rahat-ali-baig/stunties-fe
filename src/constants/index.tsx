@@ -1,6 +1,23 @@
 import { Eye, Heart, Star, Download, Users, TrendingUp, CheckCircle, Briefcase, Package, DollarSign } from "lucide-react"; import AlertBanner from "@/components/addons/AlertBanner";
 import { FaEye } from "react-icons/fa";
 
+interface UserGrowthData {
+    month: string;
+    newUsers: number;
+    verified: number;
+}
+
+interface UserDistributionData {
+    country: string;
+    users: number;
+    code: string;
+}
+
+interface UserGrowthChartProps {
+    growthData?: UserGrowthData[];
+    distributionData?: UserDistributionData[];
+}
+
 export const metricCards = [
     {
         title: "PROFILE VIEWS",
@@ -122,4 +139,24 @@ export const metricCards = [
         invBg: "bg-secondary",
         invClr: "text-border"
     }
+];
+
+export const defaultGrowthData: UserGrowthData[] = [
+    { month: 'Jan', newUsers: 1240, verified: 980 },
+    { month: 'Feb', newUsers: 1580, verified: 1320 },
+    { month: 'Mar', newUsers: 1800, verified: 1500 },
+    { month: 'Apr', newUsers: 1400, verified: 1200 },
+    { month: 'May', newUsers: 1600, verified: 1300 },
+    { month: 'Jun', newUsers: 1900, verified: 1600 },
+];
+
+export const defaultDistributionData: UserDistributionData[] = [
+    { country: 'United States', users: 8234, code: 'US' },
+    { country: 'United Kingdom', users: 4521, code: 'GB' },
+    { country: 'Canada', users: 3147, code: 'CA' },
+    { country: 'Australia', users: 2893, code: 'AU' },
+    { country: 'Germany', users: 2156, code: 'DE' },
+    { country: 'France', users: 1647, code: 'FR' },
+    { country: 'Spain', users: 1124, code: 'ES' },
+    { country: 'Others', users: 1131, code: 'Others' },
 ];

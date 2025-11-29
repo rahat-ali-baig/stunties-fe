@@ -81,20 +81,20 @@ const Navbar = ({ userRole = "admin" }: NavbarProps) => {
   return (
     <div className="w-full md:px-6 px-4 md:py-4 py-3 flex items-center justify-between relative">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm">
+      <div className="flex items-center gap-2 text-xl">
         {breadcrumbs.map((crumb, index) => (
           <div key={crumb.href} className="flex items-center gap-2">
             {index > 0 && <span className="text-gray-400">/</span>}
-            <span
-              className={`font-manrope cursor-pointer transition-colors ${
+            <h2
+              className={`cursor-pointer font-helvetica! uppercase font-light! tracking-widest transition-colors ${
                 index === breadcrumbs.length - 1 
-                  ? "font-medium text-foreground" 
-                  : "text-gray-400 hover:text-foreground"
+                  ? "text-foreground" 
+                  : "text-foreground/70 hover:text-foreground"
               }`}
               onClick={() => index < breadcrumbs.length - 1 && router.push(crumb.href)}
             >
               {crumb.label}
-            </span>
+            </h2>
           </div>
         ))}
       </div>
