@@ -93,14 +93,14 @@ const VerifyPage = () => {
     <div className="w-full max-w-[500px] flex flex-col items-center">
       {/* Header Section */}
       <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-          <FaFingerprint className="w-8 h-8 text-primary" />
+        <div className="w-16 h-16 bg-primary-dark/20 rounded-full flex items-center justify-center mb-4">
+          <FaFingerprint className="w-8 h-8 text-primary-dark" />
         </div>
         <h2 className="text-foreground text-4xl font-coolvetica text-center">
           ENTER YOUR CODE
         </h2>
         <p className="text-foreground text-xl mt-2 text-center">
-          We sent a code to <span className="text-primary">drew@salesproduct.com</span>
+          We sent a code to <span className="text-primary-dark">drew@salesproduct.com</span>
         </p>
       </div>
 
@@ -116,7 +116,7 @@ const VerifyPage = () => {
               renderInput={(props) => (
                 <input
                   {...props}
-                  className="w-12! h-14 border-2 border-border bg-background text-foreground text-xl font-bold rounded-lg text-center focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                  className="w-12! h-14 border-2 border-border bg-background text-foreground text-xl font-bold rounded-lg text-center focus:border-primary-dark focus:ring-2 focus:ring-primary-dark/20 transition-all duration-200"
                 />
               )}
               inputType="number"
@@ -153,14 +153,14 @@ const VerifyPage = () => {
           {canResend ? (
             <button
               onClick={handleResendOtp}
-              className="text-primary hover:underline flex items-center gap-1 mx-auto justify-center"
+              className="text-primary-dark hover:underline flex items-center gap-1 mx-auto justify-center"
             >
               <FaRedo className="w-3 h-3" />
               Resend OTP
             </button>
           ) : (
             <span className="text-gray-400">
-              Resend in <span className="text-primary">{timer}s</span>
+              Resend in <span className="text-primary-dark">{timer}s</span>
             </span>
           )}
         </p>
@@ -169,7 +169,7 @@ const VerifyPage = () => {
       {/* Back to Login */}
       <button
         onClick={handleBackToLogin}
-        className="text-primary text-sm hover:underline flex items-center gap-2"
+        className="text-primary-dark text-sm hover:underline flex items-center gap-2"
       >
         <FaArrowLeft className="w-3 h-3" />
         Back to Sign In

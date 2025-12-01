@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import localFont from 'next/font/local';
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { Mona_Sans } from "next/font/google";
+
+const mona_sans = Mona_Sans({
+  variable: "--font-mona-sans",
+  subsets: ["latin"],
+});
 
 const coolvetica = localFont({
   src: '../../public/fonts/coolvetica.otf',
@@ -26,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${coolvetica.variable} ${helvetica.variable} antialiased`}
+        className={`${mona_sans.variable} antialiased`}
       >
         {children}
         <Toaster />

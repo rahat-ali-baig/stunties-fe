@@ -1,5 +1,6 @@
-import { Eye, Heart, Star, Download, Users, TrendingUp, CheckCircle, Briefcase, Package, DollarSign } from "lucide-react"; import AlertBanner from "@/components/addons/AlertBanner";
+import { Eye, Heart, Star, Download, Users, TrendingUp, CheckCircle, Briefcase, Package, DollarSign, Clock, Zap, Activity, UserCheck, Target, Award, CreditCard, ShoppingBag, Trophy, LineChart } from "lucide-react"; import AlertBanner from "@/components/addons/AlertBanner";
 import { FaEye } from "react-icons/fa";
+import { MdOutlineWorkOutline } from "react-icons/md";
 
 interface UserGrowthData {
     month: string;
@@ -17,6 +18,132 @@ interface UserGrowthChartProps {
     growthData?: UserGrowthData[];
     distributionData?: UserDistributionData[];
 }
+
+export const dashboardMetricCards = [
+    {
+        title: "TOTAL USERS",
+        value: "24,853",
+        change: "+8%",
+        icon: Users,
+        forecast: "Forecast next week: +3%"
+    },
+    {
+        title: "ACTIVE (7 DAYS)",
+        value: "8,492",
+        change: "+12%",
+        icon: Activity,
+        forecast: "Forecast next week: +5%"
+    },
+    {
+        title: "VERIFIED USERS",
+        value: "18,234",
+        change: "+5%",
+        icon: UserCheck,
+        forecast: "Forecast next week: +2%"
+    },
+    {
+        title: "TOTAL JOBS",
+        value: "5,847",
+        change: "+15%",
+        icon: MdOutlineWorkOutline,
+        forecast: "Forecast next week: +8%"
+    },
+    {
+        title: "OPEN JOBS",
+        value: "1,293",
+        change: "-2%",
+        icon: Target,
+        forecast: "Forecast next week: +1%"
+    },
+    {
+        title: "COMPLETED JOBS",
+        value: "4,554",
+        change: "+18%",
+        icon: Award,
+        forecast: "Forecast next week: +10%"
+    },
+    {
+        title: "TOTAL PLATFORM EARNINGS",
+        value: "$842,947",
+        change: "+24%",
+        icon: DollarSign,
+        forecast: "Forecast next week: +6%"
+    },
+    {
+        title: "THIS MONTH'S EARNINGS",
+        value: "$127,483",
+        change: "+18%",
+        icon: CreditCard,
+        forecast: "Forecast next week: +4%"
+    },
+    {
+        title: "TOTAL ORDERS",
+        value: "3,847",
+        change: "+11%",
+        icon: ShoppingBag,
+        forecast: "Forecast next week: +5%"
+    },
+    {
+        title: "IN-PROGRESS ORDERS",
+        value: "234",
+        change: "+5%",
+        icon: Zap,
+        forecast: "Likely 250 units next week: +7%"
+    },
+    {
+        title: "COMPLETED ORDERS",
+        value: "3,613",
+        change: "+12%",
+        icon: Trophy,
+        forecast: "Forecast next week: +8%"
+    },
+    {
+        title: "SHOP REVENUE",
+        value: "$284,930",
+        change: "+9%",
+        icon: LineChart,
+        forecast: "Forecast next week: +4%"
+    }
+];
+
+export const userCards = [
+    {
+        title: "TOTAL USERS",
+        value: "50",
+        change: "+12%",
+        icon: Users,
+    },
+    {
+        title: "VERIFIED USERS",
+        value: "26",
+        change: "+8%",
+        icon: CheckCircle,
+    },
+    {
+        title: "PENDING VERIFICATION",
+        value: "10",
+        change: "-3%",
+        icon: Clock,
+    },
+    {
+        title: "ACTIVE USERS (7D)",
+        value: "34",
+        change: "+18%",
+        icon: TrendingUp,
+    },
+    {
+        title: "PRO SUBSCRIBERS",
+        value: "19",
+        change: "+24%",
+        icon: Star,
+    },
+    {
+        title: "ACTIVE BOOSTS",
+        value: "22",
+        change: "+5%",
+        icon: Zap,
+    }
+];
 
 export const metricCards = [
     {

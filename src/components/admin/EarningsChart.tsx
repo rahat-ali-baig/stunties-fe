@@ -90,16 +90,16 @@ const EarningsChart: React.FC<EarningsChartProps> = ({ timeRange = "30 days" }) 
     };
 
     return (
-        <div className="py-8">
-            <div className="flex justify-between items-center mb-6">
+        <div className="py-6">
+            <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h2 className="text-lg xl:text-xl font-medium text-foreground font-coolvetica">Earnings Overview</h2>
-                    <p className="text-sm text-foreground/40 mt-1">
+                    <h2 className="text-xl font-medium text-foreground">Earnings Overview</h2>
+                    <p className="text-sm text-foreground/70 mt-1">
                         Total revenue and breakdown by source
                     </p>
                 </div>
                 <Select value={selectedTimeRange} onValueChange={setSelectedTimeRange}>
-                    <SelectTrigger className="w-[120px] border-border/20 bg-transparent">
+                    <SelectTrigger className="w-[120px] border-border bg-transparent">
                         <SelectValue placeholder="Select time range" />
                     </SelectTrigger>
                     <SelectContent>
@@ -111,61 +111,77 @@ const EarningsChart: React.FC<EarningsChartProps> = ({ timeRange = "30 days" }) 
             </div>
 
             <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%" className={'border-0! outline-none! '} >
+                <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                         data={chartData}
                         margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                     >
                         <defs>
                             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#D7FF66" stopOpacity={0.4} />
-                                <stop offset="95%" stopColor="#D7FF66" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#435c00" stopOpacity={0.2} />
+                                <stop offset="95%" stopColor="#435c00" stopOpacity={0} />
                             </linearGradient>
                             <linearGradient id="colorOrganic" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#AAF7FF" stopOpacity={0.4} />
-                                <stop offset="95%" stopColor="#AAF7FF" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#D7FF66" stopOpacity={0.2} />
+                                <stop offset="95%" stopColor="#D7FF66" stopOpacity={0} />
                             </linearGradient>
                             <linearGradient id="colorReferrals" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#E3E3E3" stopOpacity={0.4} />
-                                <stop offset="95%" stopColor="#E3E3E3" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#262626" stopOpacity={0.15} />
+                                <stop offset="95%" stopColor="#262626" stopOpacity={0} />
                             </linearGradient>
                             <linearGradient id="colorDirect" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#ffff00" stopOpacity={0.4} />
-                                <stop offset="95%" stopColor="#ffff00" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#090909" stopOpacity={0.1} />
+                                <stop offset="95%" stopColor="#090909" stopOpacity={0} />
                             </linearGradient>
                         </defs>
 
-                        {/* Only show Y and X axis lines */}
                         <CartesianGrid
-                            horizontal={false}
+                            horizontal={true}
                             vertical={false}
-                            stroke="#D7FF66"
+                            stroke="#E5E7EB"
+                            strokeDasharray="0" // Changed from "3 3" to "0" for solid lines
                         />
 
                         <XAxis
                             dataKey="month"
-                            axisLine={{ stroke: '#E3E3E330' }}
+                            axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#FFFFFF60', fontSize: 12 }}
+                            tick={{ fill: '#6B7280', fontSize: 12 }}
                         />
                         <YAxis
-                            axisLine={{ stroke: '#E3E3E330' }}
+                            axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#FFFFFF60', fontSize: 12 }}
+                            tick={{ fill: '#6B7280', fontSize: 12 }}
                             tickFormatter={(value) => `$${value / 1000}k`}
                         />
 
                         <Tooltip
+                            contentStyle={{
+                                backgroundColor: 'white',
+                                border: '1px solid #E5E7EB',
+                                borderRadius: '8px',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            }}
                             content={({ active, payload, label }) => {
                                 if (active && payload && payload.length) {
                                     return (
-                                        <div className="bg-background border border-border/10 rounded-lg p-3 shadow-lg outline-none border-none ring-0">
+                                        <div className="bg-white border border-border rounded-lg p-3">
                                             <p className="font-medium text-foreground mb-2">{label}</p>
-                                            {payload.map((entry, index) => (
-                                                <p key={index} className="text-sm text-foreground" style={{ color: entry.color }}>
-                                                    {entry.name}: ${entry.value?.toLocaleString()}
-                                                </p>
-                                            ))}
+                                            <div className="space-y-1">
+                                                {payload.map((entry, index) => (
+                                                    <p 
+                                                        key={index} 
+                                                        className="text-sm text-foreground"
+                                                        style={{ 
+                                                            color: entry.dataKey === 'revenue' ? '#435c00' :
+                                                                   entry.dataKey === 'organic' ? '#D7FF66' :
+                                                                   entry.dataKey === 'referrals' ? '#262626' : '#090909'
+                                                        }}
+                                                    >
+                                                        {entry.name}: ${entry.value?.toLocaleString()}
+                                                    </p>
+                                                ))}
+                                            </div>
                                         </div>
                                     );
                                 }
@@ -179,10 +195,10 @@ const EarningsChart: React.FC<EarningsChartProps> = ({ timeRange = "30 days" }) 
                                 type="monotone"
                                 dataKey="direct"
                                 stackId="1"
-                                stroke="#ffff0060"
+                                stroke="#090909"
                                 fill="url(#colorDirect)"
                                 name="Direct Sales"
-                                strokeWidth={1}
+                                strokeWidth={2}
                             />
                         )}
                         {visibleCharts.referrals && (
@@ -190,10 +206,10 @@ const EarningsChart: React.FC<EarningsChartProps> = ({ timeRange = "30 days" }) 
                                 type="monotone"
                                 dataKey="referrals"
                                 stackId="1"
-                                stroke="#E3E3E360"
+                                stroke="#262626"
                                 fill="url(#colorReferrals)"
                                 name="Referrals"
-                                strokeWidth={1}
+                                strokeWidth={2}
                             />
                         )}
                         {visibleCharts.organic && (
@@ -201,10 +217,10 @@ const EarningsChart: React.FC<EarningsChartProps> = ({ timeRange = "30 days" }) 
                                 type="monotone"
                                 dataKey="organic"
                                 stackId="1"
-                                stroke="#AAF7FF60"
+                                stroke="#D7FF66"
                                 fill="url(#colorOrganic)"
                                 name="Organic"
-                                strokeWidth={1}
+                                strokeWidth={2}
                             />
                         )}
                         {visibleCharts.revenue && (
@@ -212,10 +228,10 @@ const EarningsChart: React.FC<EarningsChartProps> = ({ timeRange = "30 days" }) 
                                 type="monotone"
                                 dataKey="revenue"
                                 stackId="1"
-                                stroke="#D7FF6660"
+                                stroke="#435c00"
                                 fill="url(#colorRevenue)"
                                 name="Total Revenue"
-                                strokeWidth={1}
+                                strokeWidth={2}
                             />
                         )}
                     </AreaChart>
@@ -223,49 +239,49 @@ const EarningsChart: React.FC<EarningsChartProps> = ({ timeRange = "30 days" }) 
             </div>
 
             {/* Toggle buttons for charts */}
-            <div className="flex justify-center gap-6 mt-4">
+            <div className="flex justify-center gap-4 mt-6">
                 <button
                     onClick={() => toggleChart('revenue')}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${visibleCharts.revenue
-                        ? 'bg-primary/5 text-white border-primary/10'
-                        : 'border-border/10 opacity-50'
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${visibleCharts.revenue
+                        ? 'bg-primary-dark/30 text-foreground border-primary-dark/30'
+                        : 'border-border text-foreground/40'
                         }`}
                 >
-                    {visibleCharts.revenue ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                    <span className="text-xs">Total Revenue</span>
+                    {visibleCharts.revenue ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    <span className="text-sm">Total Revenue</span>
                 </button>
 
                 <button
                     onClick={() => toggleChart('organic')}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${visibleCharts.organic
-                        ? 'bg-[#AAF7FF]/5 text-white border-[#AAF7FF]/10'
-                        : 'border-border/10 opacity-50'
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${visibleCharts.organic
+                        ? 'bg-primary/30 text-foreground border-primary/30'
+                        : 'border-border text-foreground/40'
                         }`}
                 >
-                    {visibleCharts.organic ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                    <span className="text-xs">Organic</span>
+                    {visibleCharts.organic ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    <span className="text-sm">Organic</span>
                 </button>
 
                 <button
                     onClick={() => toggleChart('referrals')}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${visibleCharts.referrals
-                        ? 'bg-[#E3E3E3]/5 text-white border-[#E3E3E3]/10'
-                        : 'border-border/10 opacity-50'
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${visibleCharts.referrals
+                        ? 'bg-secondary/10 text-foreground border-secondary/30'
+                        : 'border-border text-foreground/40'
                         }`}
                 >
-                    {visibleCharts.referrals ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                    <span className="text-xs">Referrals</span>
+                    {visibleCharts.referrals ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    <span className="text-sm">Referrals</span>
                 </button>
 
                 <button
                     onClick={() => toggleChart('direct')}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-colors ${visibleCharts.direct
-                        ? 'bg-[#ffff00]/5 text-white border-[#ffff00]/10'
-                        : 'border-border/10 opacity-50'
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${visibleCharts.direct
+                        ? 'bg-foreground/30 text-foreground border-foreground/30'
+                        : 'border-border text-foreground/40'
                         }`}
                 >
-                    {visibleCharts.direct ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                    <span className="text-xs">Direct Sales</span>
+                    {visibleCharts.direct ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    <span className="text-sm">Direct Sales</span>
                 </button>
             </div>
         </div>

@@ -4,17 +4,18 @@
 import { useState } from "react";
 import AlertBanner from "@/components/addons/AlertBanner";
 import MetricsSlider from "@/components/admin/MetricsSlider";
-import { metricCards } from "@/constants";
+import { dashboardMetricCards } from "@/constants";
 import EarningsChart from "@/components/admin/EarningsChart";
 import UserGrowthChart from "@/components/admin/UserGrowthChart";
 import RecentUsers from "@/components/admin/RecentUsers";
 import AdminFooter from "@/components/admin/AdminFooter";
+import { DataTableDemo } from "@/components/addons/DataTable";
 
 const AdminDashboard = () => {
   const [showAlert, setShowAlert] = useState(true);
 
   return (
-    <div className="h-[calc(100vh-80px)] w-full overflow-y-auto p-4">
+    <div className="h-[calc(100dvh-120px)] w-full overflow-y-auto p-4">
       {/* Alert Banner */}
       <AlertBanner
         title="Platform Performance Update"
@@ -24,7 +25,7 @@ const AdminDashboard = () => {
       />
 
       {/* Metrics Slider */}
-      <MetricsSlider cards={metricCards} cardsPerView={3} />
+      <MetricsSlider cards={dashboardMetricCards} />
 
       <EarningsChart />
       <UserGrowthChart />

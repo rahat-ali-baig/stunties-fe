@@ -1,34 +1,38 @@
-
 'use client';
 
 import { useState } from "react";
-import { Eye, Heart, Star, Download, Users, TrendingUp, CheckCircle, Briefcase, Package, DollarSign } from "lucide-react"; import AlertBanner from "@/components/addons/AlertBanner";
 import MetricsSlider from "@/components/admin/MetricsSlider";
-import { metricCards } from "@/constants";
-import EarningsChart from "@/components/admin/EarningsChart";
-import UserGrowthChart from "@/components/admin/UserGrowthChart";
-import RecentUsers from "@/components/admin/RecentUsers";
-import AdminFooter from "@/components/admin/AdminFooter";
+import { userCards } from "@/constants";
 import { RiUserSmileFill } from "react-icons/ri";
 import PageHeader from "@/components/addons/PageHeader";
+import LocationFilterSection from "@/components/usersManagement/LocationFilterSection";
+import Users from "@/components/usersManagement/Users";
 
-const AdminDashboard = () => {
-  const [showAlert, setShowAlert] = useState(true);
+const UserManagment = () => {
+  const [appliedFilters, setAppliedFilters] = useState<any>({});
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleApplyFilters = (filters: any) => {
+    console.log("Filters applied:", filters);
+    setAppliedFilters(filters);
+  };
 
   return (
-    <div className="h-[calc(100vh-80px)] w-full overflow-y-auto p-4">
-      <PageHeader
+    <div className="h-[calc(100vh-120px)] w-full overflow-y-auto p-4">
+      {/* <PageHeader
         title="Users Management"
-        subtitle="Manage all the AnamProfiles"
-        highlight={'6'}
-        icon={<RiUserSmileFill className="w-10 h-10" />}
-      />
+        subtitle="Manage and verify user accounts and permissions"
+      /> */}
 
-      {/* Metrics Slider */}
-      <MetricsSlider cards={metricCards} cardsPerView={3} />
-      <RecentUsers />
+      <MetricsSlider cards={userCards} />
+      <LocationFilterSection
+        onApplyFilters={handleApplyFilters}
+        setSearchQuery={setSearchQuery}
+        searchQuery={searchQuery}
+      />
+      <Users filters={appliedFilters} searchQuery={searchQuery} />
     </div>
   );
 };
 
-export default AdminDashboard;
+export default UserManagment;

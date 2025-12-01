@@ -3,19 +3,61 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import NotificationDropdown from "./NotificationDropdown";
 import { 
-  FaPlay, 
   FaBell, 
-  FaPlus,
-  FaShoppingCart,
+  FaCaretDown,
   FaUser,
   FaSignOutAlt
 } from "react-icons/fa";
-import NotificationDropdown from "./NotificationDropdown";
 
 interface NavbarProps {
   userRole?: string;
 }
+
+// Page configurations with titles and descriptions
+const pageConfigs: Record<string, { title: string; description: string }> = {
+  '/admin/dashboard': {
+    title: 'Dashboard',
+    description: 'All your tools, insights, and progress in one place'
+  },
+  '/admin/users': {
+    title: 'User Management',
+    description: 'Manage user accounts and permissions'
+  },
+  '/admin/user-verifications': {
+    title: 'User Verification',
+    description: 'Approve or reject user verification requests'
+  },
+  '/admin/marketplace': {
+    title: 'Jobs & Marketplace',
+    description: 'Manage job listings and marketplace activities'
+  },
+  '/admin/orders': {
+    title: 'Orders & Delivery',
+    description: 'Track and manage orders and delivery status'
+  },
+  '/admin/wallet': {
+    title: 'Wallet',
+    description: 'Manage payments, payouts, and financial transactions'
+  },
+  '/admin/subscription': {
+    title: 'Subscription',
+    description: 'Handle subscription plans and profile boosts'
+  },
+  '/admin/shop': {
+    title: 'Shop',
+    description: 'Manage e-commerce shop and product orders'
+  },
+  '/admin/notifications': {
+    title: 'Notifications',
+    description: 'Configure and manage system notifications'
+  },
+  '/admin/profile': {
+    title: 'Profile',
+    description: 'Manage your account settings and preferences'
+  }
+};
 
 const Navbar = ({ userRole = "admin" }: NavbarProps) => {
   const router = useRouter();
@@ -23,22 +65,24 @@ const Navbar = ({ userRole = "admin" }: NavbarProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   
-  // Dummy data
   const userData = {
-    name: "John Doe",
-    email: "john.doe@stunties.com",
+    name: "Shehroz Ahmad",
+    email: "shehrozahmad872@gmail.com",
     role: "Admin",
     avatar_url: ""
   };
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [logoutOpen, setLogoutOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(3);
+  const [logoutOpen, setLogoutOpen] = useState(false);
+
+  const currentPage = pageConfigs[pathname] || {
+    title: 'Dashboard',
+    description: 'All your tools, insights, and progress in one place'
+  };
 
   const handleLogout = () => {
     setDropdownOpen(false);
-    // Dummy logout function
     console.log("Logging out...");
     toast({
       variant: "success",
@@ -47,26 +91,6 @@ const Navbar = ({ userRole = "admin" }: NavbarProps) => {
     });
     router.push("/");
   };
-
-  // Generate breadcrumbs from pathname
-  const generateBreadcrumbs = () => {
-    const paths = pathname.split('/').filter(path => path);
-    
-    if (paths.length === 0) return [{ href: "/", label: "Home" }];
-
-    const breadcrumbs = paths.map((path, index) => {
-      const href = '/' + paths.slice(0, index + 1).join('/');
-      const label = path.split('-').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-      ).join(' ');
-      
-      return { href, label };
-    });
-    
-    return breadcrumbs;
-  };
-
-  const breadcrumbs = generateBreadcrumbs();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -79,147 +103,85 @@ const Navbar = ({ userRole = "admin" }: NavbarProps) => {
   }, []);
 
   return (
-    <div className="w-full md:px-6 px-4 md:py-4 py-3 flex items-center justify-between relative">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xl">
-        {breadcrumbs.map((crumb, index) => (
-          <div key={crumb.href} className="flex items-center gap-2">
-            {index > 0 && <span className="text-gray-400">/</span>}
-            <h2
-              className={`cursor-pointer font-helvetica! uppercase font-light! tracking-widest transition-colors ${
-                index === breadcrumbs.length - 1 
-                  ? "text-foreground" 
-                  : "text-foreground/70 hover:text-foreground"
-              }`}
-              onClick={() => index < breadcrumbs.length - 1 && router.push(crumb.href)}
-            >
-              {crumb.label}
-            </h2>
-          </div>
-        ))}
-      </div>
-
-      {/* Header Actions */}
-      <div className="flex items-center justify-end gap-3 relative">
-        {/* Notification Bell */}
-        <div className="relative">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative w-9 h-9 rounded-lg bg-secondary hover:bg-secondary/80 border border-border/10"
-            onClick={() => setNotificationOpen(!notificationOpen)}
-          >
-            <FaBell className="w-4 h-4 text-foreground" />
-            <div className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center text-xs bg-primary text-secondary rounded-full">
-              3
-            </div>
-          </Button>
-          
-          {/* Notification Dropdown */}
-          <NotificationDropdown 
-            isOpen={notificationOpen} 
-            onClose={() => setNotificationOpen(false)} 
-          />
+    <div className="w-full bg-background border-b border-gray-200">
+      <div className="px-6 py-4 flex items-center justify-between">
+        {/* Dynamic Title */}
+        <div className="px-1">
+          <h1 className="text-2xl font-semibold text-foreground">{currentPage.title}</h1>
+          <p className="text-foreground/60 text-sm mt-1">{currentPage.description}</p>
         </div>
 
-        {/* User cart */}
-        {userRole === "user" && (
-          <>
-            <Button
-              variant="default"
-              className="hidden sm:flex items-center gap-2 bg-primary hover:bg-primary/90"
-              onClick={() => {/* Add tutorial modal */}}
+        {/* Actions */}
+        <div className="flex items-center gap-4">
+          {/* Notification Bell */}
+          <div className="relative">
+            <button
+              className="relative w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+              onClick={() => setNotificationOpen(!notificationOpen)}
             >
-              <FaPlay className="text-background text-xs" />
-              View Tutorial
-            </Button>
-
-            <div className="relative cursor-pointer" onClick={() => {/* Add cart modal */}}>
-              <div className="p-2 rounded-lg bg-secondary border border-border hover:border-primary/50 transition-colors">
-                <FaShoppingCart className="w-4 h-4 text-foreground" />
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 flex items-center justify-center text-xs bg-primary/20 text-primary rounded-full border border-primary/30">
-                {cartCount}
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Add New Button */}
-        {(userRole === "admin" || userRole === "moderator") && (
-          <Button
-            variant="default"
-            className="flex items-center gap-2 text-secondary font-coolvetica bg-primary hover:bg-primary/90"
-            onClick={() => {
-              toast({
-                variant: "default",
-                title: "Add New",
-                description: "Add new functionality would open here.",
-              });
-            }}
-          >
-            <FaPlus className="text-background text-sm" />
-            Add New
-          </Button>
-        )}
-
-        {/* User Profile Dropdown */}
-        <div className="relative w-fit" ref={dropdownRef}>
-          {userData.avatar_url ? (
-            <img
-              src={userData.avatar_url}
-              alt="avatar"
-              className="w-8 h-8 object-cover rounded-full cursor-pointer bg-secondary border border-border hover:border-primary/50 transition-colors"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
+              <FaBell className="w-5 h-5 text-gray-600" />
+              <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+            </button>
+            
+            {/* Notification Dropdown */}
+            <NotificationDropdown 
+              isOpen={notificationOpen} 
+              onClose={() => setNotificationOpen(false)} 
             />
-          ) : (
-            <div
-              className="w-8 h-8 bg-primary text-secondary rounded-full flex items-center justify-center font-semibold text-sm cursor-pointer hover:bg-primary/90 transition-colors"
+          </div>
+
+          {/* User Profile */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
-              {userData.name ? userData.name.charAt(0).toUpperCase() : userData.email ? userData.email.charAt(0).toUpperCase() : 'U'}
-            </div>
-          )}
+              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                <span className="font-semibold text-foreground text-lg">S</span>
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-medium text-foreground">{userData.name}</p>
+                <p className="text-xs text-gray-500">{userData.role}</p>
+              </div>
+              <FaCaretDown className={`w-4 h-4 text-gray-600 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-          {/* Dropdown Menu */}
-          <div
-            className={`absolute right-0 mt-2 w-56 bg-background backdrop-blur-lg shadow-lg rounded-xl border border-border/5 p-3 z-50 transition-all duration-200 ${
-              dropdownOpen
-                ? "opacity-100 translate-y-0 pointer-events-auto"
-                : "opacity-0 -translate-y-2 pointer-events-none"
-            }`}
-            style={{ top: "calc(100% + 0.5rem)" }}
-          >
-            <div className="mb-2 px-2">
-              <p className="font-medium text-sm text-foreground capitalize">
-                {userData.role === "Admin" ? "Admin" : userData.name || "Guest"}
-              </p>
-              <p className="text-xs text-gray-400 truncate">
-                {userData.email || "No email found"}
-              </p>
-            </div>
+            {/* Dropdown Menu */}
+            <div
+              className={`absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 transition-all duration-200 ${
+                dropdownOpen
+                  ? "opacity-100 translate-y-0 pointer-events-auto"
+                  : "opacity-0 -translate-y-2 pointer-events-none"
+              }`}
+              style={{ top: "calc(100% + 0.5rem)" }}
+            >
+              <div className="px-4 py-3 border-b border-gray-100">
+                <p className="font-medium text-foreground">{userData.name}</p>
+                <p className="text-sm text-gray-500 truncate">{userData.email}</p>
+              </div>
 
-            <div className="flex flex-col gap-1 text-sm py-2 border-t border-border/5">
-              <button
-                onClick={() => {
-                  setDropdownOpen(false);
-                  router.push("/admin/settings");
-                }}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-left"
-              >
-                <FaUser className="w-4 h-4 text-gray-400" />
-                Profile
-              </button>
-              <button
-                onClick={() => {
-                  setDropdownOpen(false);
-                  setLogoutOpen(true);
-                }}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors text-left"
-              >
-                <FaSignOutAlt className="w-4 h-4" />
-                Logout
-              </button>
+              <div className="py-2">
+                <button
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    router.push("/admin/profile");
+                  }}
+                  className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+                >
+                  <FaUser className="w-4 h-4 text-gray-600" />
+                  <span className="text-foreground">Profile Settings</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    setLogoutOpen(true);
+                  }}
+                  className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+                >
+                  <FaSignOutAlt className="w-4 h-4 text-gray-600" />
+                  <span className="text-foreground">Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -228,24 +190,25 @@ const Navbar = ({ userRole = "admin" }: NavbarProps) => {
       {/* Logout Confirmation Modal */}
       {logoutOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-background/95 backdrop-blur-lg rounded-xl p-6 max-w-sm w-full mx-4 border border-border/10">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full mx-4 border border-gray-200">
             <h3 className="text-lg font-semibold text-foreground mb-2">
               Logout Confirmation
             </h3>
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-500 mb-4">
               Are you sure you want to logout?
             </p>
             <div className="flex gap-3 justify-end">
               <Button
                 variant="outline"
                 onClick={() => setLogoutOpen(false)}
-                className="border-border hover:bg-secondary"
+                className="border-gray-300 hover:bg-gray-100 text-foreground"
               >
                 Cancel
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600"
               >
                 Confirm
               </Button>

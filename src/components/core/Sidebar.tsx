@@ -2,16 +2,21 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Logo from "@/components/core/Logo";
 import {
-    FaHome,
+    FaChevronLeft,
+    FaChevronRight,
+    FaChartPie,
     FaUsers,
-    FaShoppingCart,
-    FaBox,
-    FaFileInvoice,
-    FaCog,
-    FaBars
+    FaShieldAlt,
+    FaBriefcase,
+    FaBoxOpen,
+    FaMoneyBillWave,
+    FaStore,
+    FaUser,
+    FaBell
 } from "react-icons/fa";
+import { logo } from "../../../public";
+import Image from "next/image";
 
 interface SidebarProps {
     isSidebarOpen: boolean;
@@ -29,39 +34,57 @@ interface NavItem {
 const sidebarItems: NavItem[] = [
     {
         href: "/admin",
-        icon: <FaHome className="w-4 h-4" />,
-        active_icon: <FaHome className="w-4 h-4 text-primary" />,
-        label: "Home",
+        icon: <FaChartPie className="w-4 h-4" />,
+        active_icon: <FaChartPie className="w-4 h-4 text-primary-dark" />,
+        label: "Dashboard",
     },
     {
         href: "/admin/users",
         icon: <FaUsers className="w-4 h-4" />,
-        active_icon: <FaUsers className="w-4 h-4 text-primary" />,
-        label: "Users Management",
+        active_icon: <FaUsers className="w-4 h-4 text-primary-dark" />,
+        label: "User Management",
+    },
+    {
+        href: "/admin/user-verifications",
+        icon: <FaShieldAlt className="w-4 h-4" />,
+        active_icon: <FaShieldAlt className="w-4 h-4 text-primary-dark" />,
+        label: "User Verification",
+    },
+    {
+        href: "/admin/marketplace",
+        icon: <FaBriefcase className="w-4 h-4" />,
+        active_icon: <FaBriefcase className="w-4 h-4 text-primary-dark" />,
+        label: "Jobs & Marketplace",
     },
     {
         href: "/admin/orders",
-        icon: <FaShoppingCart className="w-4 h-4" />,
-        active_icon: <FaShoppingCart className="w-4 h-4 text-primary" />,
-        label: "Order Management",
+        icon: <FaBoxOpen className="w-4 h-4" />,
+        active_icon: <FaBoxOpen className="w-4 h-4 text-primary-dark" />,
+        label: "Orders & Delivery",
     },
     {
-        href: "/admin/products",
-        icon: <FaBox className="w-4 h-4" />,
-        active_icon: <FaBox className="w-4 h-4 text-primary" />,
-        label: "Products Management",
+        href: "/admin/wallet",
+        icon: <FaMoneyBillWave className="w-4 h-4" />,
+        active_icon: <FaMoneyBillWave className="w-4 h-4 text-primary-dark" />,
+        label: "Wallet",
     },
     {
-        href: "/admin/invoices",
-        icon: <FaFileInvoice className="w-4 h-4" />,
-        active_icon: <FaFileInvoice className="w-4 h-4 text-primary" />,
-        label: "Invoices",
+        href: "/admin/subscription",
+        icon: <FaStore className="w-4 h-4" />,
+        active_icon: <FaStore className="w-4 h-4 text-primary" />,
+        label: "Subscription",
     },
     {
-        href: "/admin/settings",
-        icon: <FaCog className="w-4 h-4" />,
-        active_icon: <FaCog className="w-4 h-4 text-primary" />,
-        label: "Settings",
+        href: "/admin/shop",
+        icon: <FaUser className="w-4 h-4" />,
+        active_icon: <FaUser className="w-4 h-4 text-primary" />,
+        label: "Shop",
+    },
+    {
+        href: "/admin/notifications",
+        icon: <FaBell className="w-4 h-4" />,
+        active_icon: <FaBell className="w-4 h-4 text-primary" />,
+        label: "Notifications",
     },
 ];
 
@@ -71,22 +94,34 @@ const SidebarNavItem = ({
     active_icon,
     label,
     isActive,
-    onClick
+    onClick,
+    isSidebarOpen
 }: NavItem & {
     isActive: boolean;
     onClick: () => void;
+    isSidebarOpen: boolean;
 }) => (
     <li className="w-full">
         <Link href={href} onClick={onClick}>
             <div
-                className={`flex items-center gap-4 px-5 py-1.5 rounded-lg text-sm transition-all duration-200
-        ${isActive
-                        ? "bg-primary/20 text-foreground font-medium border border-primary/30"
-                        : "font-normal text-gray-400 hover:text-foreground hover:bg-secondary/50 border border-transparent"
+                className={`flex items-center gap-3 rounded-lg text-sm transition-all duration-200 border ${isSidebarOpen ? "px-4 py-2.5" : "p-3 justify-center"
+                    } ${isActive
+                        ? "bg-linear-to-r from-primary/10 text-foreground to-primary-dark/10  border-primary-dark/10 font-medium"
+                        : "font-normal text-foreground/70 hover:text-foreground hover:bg-primary-dark/10 border-transparent"
                     }`}
+                title={!isSidebarOpen ? label : ""}
             >
-                {isActive ? active_icon : icon}
-                {label}
+                <span className="min-w-4 flex items-center justify-center">
+                    {isActive ? active_icon : icon}
+                </span>
+                {isSidebarOpen && (
+                    <span className={`transition-all duration-200 ${isSidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 w-0'}`}>
+                        {label}
+                    </span>
+                )}
+                {isActive && isSidebarOpen && (
+                    <div className="ml-auto w-2 h-2 rounded-full bg-primary-dark"></div>
+                )}
             </div>
         </Link>
     </li>
@@ -105,6 +140,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, userRole }: SidebarProps) =>
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768);
+            if (window.innerWidth <= 768) {
+                setIsSidebarOpen(false);
+            }
         };
 
         handleResize();
@@ -117,54 +155,94 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, userRole }: SidebarProps) =>
             {/* Overlay */}
             <div
                 onClick={() => setIsSidebarOpen(false)}
-                className={`fixed left-0 top-0 ${isSidebarOpen ? 'translate-x-0 pointer-events-auto' : '-translate-x-full pointer-events-none'} transition-all duration-300 h-screen lg:w-0 w-full bg-black/40 backdrop-blur-sm z-40 lg:hidden`}
+                className={`fixed left-0 top-0 transition-all duration-300 h-screen w-full bg-black/40 backdrop-blur-sm z-40 lg:hidden ${isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                    }`}
             />
 
             {/* Main sidebar */}
             <div
-                className={`fixed top-0 left-0 lg:z-0 z-50 w-fit overflow-hidden lg:translate-x-0 h-screen flex items-center justify-start`}
+                className={`fixed top-0 left-0 h-screen flex transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-16'
+                    } z-50`}
             >
-                {/* Side ribbon */}
-                <div className="bg-secondary lg:w-12 w-9 h-full lg:px-3 py-5 px-1.5 z-50 flex flex-col gap-8 items-center border-r border-border/20">
-                    <FaBars
-                        className="text-foreground lg:text-xl text-lg cursor-pointer hover:text-primary transition-colors"
-                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    />
-                </div>
+                {/* Sidebar Content */}
+                <div className={`bg-background h-full flex flex-col justify-between border-r border-gray-200 relative overflow-hidden w-full ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+                    } transition-all duration-300`}>
 
-                <div className={`bg-linear-to-b from-background via-background to-secondary p-4 flex flex-col justify-between h-screen transition-all duration-300 border-r border-border/10 relative overflow-hidden ${isSidebarOpen
-                        ? 'translate-x-0 pointer-events-auto w-64 overflow-y-auto opacity-100'
-                        : '-translate-x-full pointer-events-none w-0 overflow-hidden opacity-0'
-                    }`}>
-
-                    {/* Gradient Background Effects */}
-                    <div className="absolute inset-0 opacity-5">
-                        <div className="absolute top-1/4 -left-8 w-32 h-32 bg-primary rounded-full blur-2xl"></div>
-                        <div className="absolute bottom-1/4 -right-8 w-24 h-24 bg-primary rounded-full blur-xl"></div>
-                        <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-primary rounded-full blur-lg"></div>
+                    {/* Header with toggle */}
+                    <div className="p-4">
+                        <div className={`flex items-center ${isSidebarOpen ? 'justify-between' : 'justify-center'}`}>
+                            {isSidebarOpen ? (
+                                <>
+                                    <div className="flex items-center">
+                                        <div className="relative w-10 h-10 brightness-75">
+                                            <Image
+                                                src={logo}
+                                                alt="logo"
+                                                fill
+                                                className="object-contain"
+                                                priority
+                                            />
+                                        </div>
+                                        <span className="font-bold text-xl xl:text-xl text-foreground -ml-1 transition-all duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}">tunties</span>
+                                    </div>
+                                    <button
+                                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                        className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                                    >
+                                        <FaChevronLeft className="w-3 h-3 text-foreground" />
+                                    </button>
+                                </>
+                            ) : (
+                                <div className="flex flex-col items-center gap-2 w-full">
+                                    <div className="relative w-10 h-10">
+                                        <Image
+                                            src={logo}
+                                            alt="logo"
+                                            fill
+                                            className="object-contain"
+                                            priority
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                        className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                                    >
+                                        <FaChevronRight className="w-3 h-3 text-foreground" />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    {/* Sidebar Content */}
-                    <div className="w-full text-center flex flex-col h-full relative z-10">
-                        {/* Logo Section */}
-                        <div className="w-full flex py-6 px-5 justify-center">
-                            <div className="transform hover:scale-105 transition-transform duration-300">
-                                <Logo size='medium' />
-                            </div>
-                        </div>
-
-                        {/* Navigation Items */}
-                        <ul className="w-full pt-4 flex flex-col grow gap-2">
+                    {/* Navigation Items */}
+                    <div className="flex-1 overflow-y-auto py-4 px-3">
+                        <ul className="space-y-1">
                             {sidebarItems.map((item) => (
                                 <React.Fragment key={item.href}>
                                     <SidebarNavItem
                                         {...item}
                                         onClick={handleOverlayClick}
-                                        isActive={pathname === item.href || pathname.startsWith(item.href + '/')}
+                                        isActive={pathname === item.href}
+                                        isSidebarOpen={isSidebarOpen}
                                     />
                                 </React.Fragment>
                             ))}
                         </ul>
+                    </div>
+
+                    {/* Footer - User info */}
+                    <div className="p-4 border-t border-gray-200">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                <span className="font-semibold text-foreground text-sm">S</span>
+                            </div>
+                            {isSidebarOpen && (
+                                <div className="transition-all duration-200 overflow-hidden">
+                                    <p className="text-sm font-medium text-foreground">Shehroz Ahmad</p>
+                                    <p className="text-xs text-gray-500 truncate">shehrozahmad872@gmail.com</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

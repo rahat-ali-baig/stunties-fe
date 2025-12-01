@@ -18,12 +18,12 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
       </div>
 
       {/* Right Section - Brand Showcase */}
-      <div className="hidden lg:flex w-1/2 h-screen bg-linear-to-br from-secondary to-background flex-col items-center justify-center px-12 border-l border-border/10 relative overflow-hidden">
+      <div className="hidden lg:flex w-1/2 h-screen bg-linear-to-br from-foreground/5 to-background flex-col items-center justify-center px-12 border-l border-foreground/10 relative overflow-hidden">
         {/* Animated Background Effects */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-primary rounded-full blur-2xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-primary rounded-full blur-xl animate-pulse delay-500"></div>
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary-dark rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-primary-dark rounded-full blur-2xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-primary-dark rounded-full blur-xl animate-pulse delay-500"></div>
         </div>
 
         {/* Floating Logo Particles */}
@@ -31,14 +31,14 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="absolute opacity-20"
+              className="absolute opacity-10"
               style={{
                 top: `${20 + i * 15}%`,
                 left: `${10 + i * 15}%`,
                 animation: `float 3s ease-in-out ${i * 0.5}s infinite alternate`
               }}
             >
-              <div className="w-8 h-8 bg-primary rounded-lg transform rotate-45"></div>
+              <div className="w-8 h-8 bg-primary-dark rounded-lg transform rotate-45"></div>
             </div>
           ))}
         </div>
@@ -62,15 +62,21 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           <div className="space-y-4">
             <h1 className="text-foreground font-medium text-5xl leading-tight">
               Stunties<br />
-              Admin Corner
+              Admin Portal
             </h1>
+            <p className="text-foreground/60 text-lg mt-4">
+              Secure access to manage platform operations, user verifications, and marketplace activities
+            </p>
           </div>
         </div>
 
         {/* Footer */}
         <div className="mt-16 pt-8 absolute bottom-8 w-full text-center">
-          <p className="text-gray-400 text-sm">
-            © STUNTIES - Admin Portal
+          <p className="text-foreground/40 text-sm">
+            © {new Date().getFullYear()} STUNTIES Admin Portal
+          </p>
+          <p className="text-foreground/30 text-xs mt-2">
+            Secure • Reliable • Efficient
           </p>
         </div>
       </div>

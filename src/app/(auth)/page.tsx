@@ -57,8 +57,8 @@ const LoginPage = () => {
     <div className="w-full max-w-[500px] flex flex-col items-center">
       {/* Header with Icon */}
       <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-          <FaUserShield className="w-8 h-8 text-primary" />
+        <div className="w-16 h-16 bg-primary-dark/20 rounded-full flex items-center justify-center mb-4">
+          <FaUserShield className="w-8 h-8 text-primary-dark" />
         </div>
         <h2 className="text-foreground text-4xl font-coolvetica text-center">
           WELCOME BACK
@@ -76,7 +76,7 @@ const LoginPage = () => {
         {/* Email Input */}
         <div className="w-full mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <FaEnvelope className="w-4 h-4 text-primary" />
+            <FaEnvelope className="w-4 h-4 text-primary-dark" />
             <label className="text-foreground text-base font-medium">
               Email Address
             </label>
@@ -101,7 +101,7 @@ const LoginPage = () => {
         {/* Password Input */}
         <div className="w-full mb-2">
           <div className="flex items-center gap-2 mb-3">
-            <FaLock className="w-4 h-4 text-primary" />
+            <FaLock className="w-4 h-4 text-primary-dark" />
             <label className="text-foreground text-base font-medium">
               Password
             </label>
@@ -126,7 +126,7 @@ const LoginPage = () => {
         {/* Forgot Password Link */}
         <Link 
           href="/forgot-password" 
-          className="text-primary self-end text-sm hover:underline flex items-center gap-1 mb-6"
+          className="text-primary-dark self-end text-sm hover:underline flex items-center gap-1 mb-6"
         >
           Forgot Password?
           <FaArrowRight className="w-3 h-3" />

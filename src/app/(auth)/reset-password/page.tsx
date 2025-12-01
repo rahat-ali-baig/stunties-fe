@@ -61,8 +61,8 @@ const ResetPasswordPage = () => {
     <div className="w-full max-w-[500px] flex flex-col items-center">
       {/* Header Section */}
       <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-          <FaLock className="w-8 h-8 text-primary" />
+        <div className="w-16 h-16 bg-primary-dark/20 rounded-full flex items-center justify-center mb-4">
+          <FaLock className="w-8 h-8 text-primary-dark" />
         </div>
         <h2 className="text-foreground text-4xl font-coolvetica text-center">
           SET NEW PASSWORD
@@ -76,7 +76,7 @@ const ResetPasswordPage = () => {
         {/* Password Inputs */}
         <div className="w-full mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <FaLock className="w-4 h-4 text-primary" />
+            <FaLock className="w-4 h-4 text-primary-dark" />
             <label className="text-foreground text-base font-medium">
               New Password
             </label>
@@ -100,7 +100,7 @@ const ResetPasswordPage = () => {
 
         <div className="w-full mb-2">
           <div className="flex items-center gap-2 mb-3">
-            <FaCheckCircle className="w-4 h-4 text-primary" />
+            <FaCheckCircle className="w-4 h-4 text-primary-dark" />
             <label className="text-foreground text-base font-medium">
               Confirm New Password
             </label>
@@ -145,7 +145,7 @@ const ResetPasswordPage = () => {
       {/* Back to Login */}
       <button
         onClick={handleBackToLogin}
-        className="text-primary mt-6 text-sm hover:underline flex items-center gap-2"
+        className="text-primary-dark mt-6 text-sm hover:underline flex items-center gap-2"
       >
         <FaArrowLeft className="w-3 h-3" />
         Back to Sign In

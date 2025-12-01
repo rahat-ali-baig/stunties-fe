@@ -56,14 +56,14 @@ const ForgotPasswordPage = () => {
   return (
     <div className="w-full max-w-[500px] flex flex-col items-center">
       <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-          <FaEnvelope className="w-8 h-8 text-primary" />
+        <div className="w-16 h-16 bg-primary-dark/20 rounded-full flex items-center justify-center mb-4">
+          <FaEnvelope className="w-8 h-8 text-primary-dark" />
         </div>
         <h2 className="text-foreground text-4xl font-coolvetica text-center">
           LOST YOUR PASS?
         </h2>
         <p className="text-foreground text-xl mt-2 text-center">
-          NO SWEAT - <span className='text-primary'>RESET IT</span>
+          NO SWEAT - <span className='text-primary-dark'>RESET IT</span>
         </p>
       </div>
 
@@ -106,7 +106,7 @@ const ForgotPasswordPage = () => {
 
       <button
         onClick={handleBackToLogin}
-        className="text-primary mt-6 text-sm hover:underline flex items-center gap-2"
+        className="text-primary-dark mt-6 text-sm hover:underline flex items-center gap-2"
       >
         <FaArrowLeft className="w-3 h-3" />
         Back to Sign In
