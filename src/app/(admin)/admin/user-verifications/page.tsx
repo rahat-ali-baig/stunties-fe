@@ -6,7 +6,7 @@ import VerificationTabs from "@/components/verifications/VerificationTabs";
 import SearchBar from "@/components/verifications/SearchBar";
 import VerificationTable from "@/components/verifications/VerificationTable";
 import FilterPanel from "@/components/verifications/FilterPanel";
-import Pagination from "@/components/verifications/Pagination";
+import Pagination from "@/components/addons/Pagination";
 import {
     Users,
     UserCheck,

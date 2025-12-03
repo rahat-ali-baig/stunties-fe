@@ -9,7 +9,7 @@ import {
   UserCheck,
   UserX,
 } from "lucide-react";
-import { VerificationTab } from "@/types/verification"; 
+import { VerificationTab } from "@/types/verification";
 
 interface TabItem {
   id: VerificationTab;
@@ -46,7 +46,7 @@ const VerificationTabs: React.FC<VerificationTabsProps> = ({
   ];
 
   return (
-    <div className="flex items-center gap-2 border-b border-foreground/10">
+    <div className="flex gap-1 mb-6">
       {tabs.map(({ id, label, icon: Icon, count }) => {
         const isActive = activeTab === id;
 
@@ -54,17 +54,21 @@ const VerificationTabs: React.FC<VerificationTabsProps> = ({
           <button
             key={id}
             onClick={() => onTabChange(id)}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors relative ${isActive
-                ? "text-primary-dark border-b-2 border-primary-dark"
-                : "text-foreground/60 hover:text-foreground"
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2
+              ${isActive
+                ? "bg-primary text-foreground font-semibold"
+                : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
               }`}
           >
-            <Icon className="w-4 h-4" />
             <span>{label}</span>
-            <span className={`px-2 py-0.5 text-xs rounded-full ${isActive
-                ? "bg-primary-dark/20 text-primary-dark"
-                : "bg-foreground/10 text-foreground/60"
-              }`}>
+
+            <span
+              className={`px-2 py-0.5 text-xs rounded-full
+                ${isActive
+                  ? "bg-background/20 text-foreground"
+                  : "bg-foreground/10 text-foreground/60"
+                }`}
+            >
               {count}
             </span>
           </button>

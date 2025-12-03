@@ -263,14 +263,14 @@ const Users: React.FC<UsersProps> = ({
                         </div>
                       )}
                       <div>
-                        <p className="font-medium text-gray-900">{user.name}</p>
+                        <p className="font-medium text-foreground">{user.name}</p>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-foreground/60 py-4">
+                  <TableCell className="text-foreground py-4">
                     {user.email}
                   </TableCell>
-                  <TableCell className="text-foreground/60 py-4">
+                  <TableCell className="text-foreground py-4">
                     {user.signupDate}
                   </TableCell>
                   <TableCell className="py-4">
@@ -293,7 +293,7 @@ const Users: React.FC<UsersProps> = ({
                     </div>
                   </TableCell>
                   <TableCell className="text-right py-4">
-                    <button className="inline-flex items-center justify-center gap-2 text-foreground/60 hover:text-primary-dark transition-colors text-sm font-medium px-4 py-2 rounded-lg hover:bg-primary-dark/5 border border-transparent hover:border-primary-dark/10">
+                    <button className="inline-flex items-center justify-center gap-2 text-foreground hover:text-primary-dark transition-colors text-sm font-medium px-4 py-2 rounded-lg hover:bg-primary-dark/5 border border-transparent hover:border-primary-dark/10">
                       <Eye className="w-4 h-4" />
                       View Details
                     </button>

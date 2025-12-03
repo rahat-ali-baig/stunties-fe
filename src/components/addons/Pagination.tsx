@@ -34,20 +34,19 @@ const Pagination: React.FC<PaginationProps> = ({
     control: (provided: any) => ({
       ...provided,
       backgroundColor: 'var(--color-background)',
-      border: '1px solid var(--color-primary-dark)',
+      border: '1px solid #09090930',
       borderRadius: '0.5rem',
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
       minHeight: '36px',
       fontSize: '14px',
       cursor: 'pointer',
       '&:hover': {
-        borderColor: 'var(--color-primary-dark)',
+        borderColor: '#435c00',
       },
     }),
     menu: (provided: any) => ({
       ...provided,
       backgroundColor: 'white',
-      border: '1px solid var(--color-primary-dark)',
+      border: '1px solid #D7FF66',
       borderRadius: '0.375rem',
       marginBottom: '4px',
       marginTop: '0',
@@ -60,11 +59,11 @@ const Pagination: React.FC<PaginationProps> = ({
     option: (provided: any, state: any) => ({
       ...provided,
       backgroundColor: state.isSelected
-        ? 'var(--color-primary-dark)'
+        ? '#D7FF66'
         : state.isFocused
           ? 'rgba(67, 92, 0, 0.1)'
           : 'transparent',
-      color: state.isSelected ? 'var(--color-background)' : 'var(--color-foreground)',
+      color: 'var(--color-foreground)',
       '&:hover': {
         backgroundColor: 'rgba(67, 92, 0, 0.1)',
         color: 'var(--color-foreground)',
@@ -144,7 +143,7 @@ const Pagination: React.FC<PaginationProps> = ({
           className="p-2 rounded-md hover:bg-foreground/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors border border-foreground/30"
           title="First page"
         >
-          <ChevronsLeft className="w-4 h-4 text-foreground/70" />
+          <ChevronsLeft className="w-4 h-4 text-foreground/80" />
         </button>
         <button
           onClick={handlePreviousPage}
@@ -152,7 +151,7 @@ const Pagination: React.FC<PaginationProps> = ({
           className="p-2 rounded-md hover:bg-foreground/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors border border-foreground/30"
           title="Previous page"
         >
-          <ChevronLeft className="w-4 h-4 text-foreground/70" />
+          <ChevronLeft className="w-4 h-4 text-foreground/80" />
         </button>
 
         <div className="flex items-center gap-1 mx-2">
@@ -174,8 +173,8 @@ const Pagination: React.FC<PaginationProps> = ({
                   key={pageNum}
                   onClick={() => onPageChange(pageNum)}
                   className={`w-8 h-8 rounded-md text-sm font-medium transition-colors border ${currentPage === pageNum
-                    ? "bg-primary-dark text-white border-primary-dark"
-                    : "text-foreground/70 border-foreground/30 hover:bg-foreground/10"
+                    ? "bg-primary text-foreground border-primary"
+                    : "text-foreground/80 border-foreground/30 hover:bg-foreground/10"
                     }`}
                 >
                   {pageNum}
@@ -192,7 +191,7 @@ const Pagination: React.FC<PaginationProps> = ({
           className="p-2 rounded-md hover:bg-foreground/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors border border-foreground/30"
           title="Next page"
         >
-          <ChevronRight className="w-4 h-4 text-foreground/70" />
+          <ChevronRight className="w-4 h-4 text-foreground/80" />
         </button>
         <button
           onClick={handleLastPage}
@@ -200,7 +199,7 @@ const Pagination: React.FC<PaginationProps> = ({
           className="p-2 rounded-md hover:bg-foreground/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors border border-foreground/30"
           title="Last page"
         >
-          <ChevronsRight className="w-4 h-4 text-foreground/70" />
+          <ChevronsRight className="w-4 h-4 text-foreground/80" />
         </button>
       </div>
     </div>

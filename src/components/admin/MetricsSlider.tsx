@@ -8,7 +8,7 @@ import { GrNext, GrPrevious } from "react-icons/gr";
 interface MetricCard {
     title: string;
     value: string;
-    change: string;
+    change?: string;
     icon: any;
     forecast?: string;
 }

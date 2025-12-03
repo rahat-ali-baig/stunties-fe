@@ -17,7 +17,7 @@ interface NavbarProps {
 
 // Page configurations with titles and descriptions
 const pageConfigs: Record<string, { title: string; description: string }> = {
-  '/admin/dashboard': {
+  '/admin': {
     title: 'Dashboard',
     description: 'All your tools, insights, and progress in one place'
   },
@@ -31,7 +31,7 @@ const pageConfigs: Record<string, { title: string; description: string }> = {
   },
   '/admin/marketplace': {
     title: 'Jobs & Marketplace',
-    description: 'Manage job listings and marketplace activities'
+    description: 'Manage gigs and casting calls.'
   },
   '/admin/orders': {
     title: 'Orders & Delivery',
@@ -45,10 +45,6 @@ const pageConfigs: Record<string, { title: string; description: string }> = {
     title: 'Subscription',
     description: 'Handle subscription plans and profile boosts'
   },
-  '/admin/shop': {
-    title: 'Shop',
-    description: 'Manage e-commerce shop and product orders'
-  },
   '/admin/notifications': {
     title: 'Notifications',
     description: 'Configure and manage system notifications'
@@ -56,6 +52,23 @@ const pageConfigs: Record<string, { title: string; description: string }> = {
   '/admin/profile': {
     title: 'Profile',
     description: 'Manage your account settings and preferences'
+  },
+  // Shop Module Routes
+  '/admin/shop/products': {
+    title: 'Products',
+    description: 'Manage your shop products, inventory, and pricing'
+  },
+  '/admin/shop/categories': {
+    title: 'Categories',
+    description: 'Organize products with categories and subcategories'
+  },
+  '/admin/shop/orders': {
+    title: 'Shop Orders',
+    description: 'Track and manage customer orders and fulfillment'
+  },
+  '/admin/shop/customers': {
+    title: 'Customers',
+    description: 'View and manage customer information and purchase history'
   }
 };
 

@@ -32,6 +32,8 @@ import {
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MetricsSlider from "@/components/admin/MetricsSlider";
+import CreateNotificationModal from "@/components/dialogs/CreateNotificationModal";
+import NotificationPreviewModal from "@/components/dialogs/NotificationPreviewModal";
 
 // Mock data for notification history
 const mockNotifications = [
@@ -229,16 +231,16 @@ const NotificationsManagementPage = () => {
     const getTypeIcon = (type: string) => {
         switch (type) {
             case 'push':
-                return <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                    <Bell className="h-5 w-5 text-blue-600" />
+                return <div className="w-10 h-10 rounded-xl bg-primary-dark/5 flex items-center justify-center">
+                    <Bell className="h-5 w-5 text-primary-dark" />
                 </div>;
             case 'email':
-                return <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                    <Mail className="h-5 w-5 text-purple-600" />
+                return <div className="w-10 h-10 rounded-xl bg-foreground/5 flex items-center justify-center">
+                    <Mail className="h-5 w-5 text-foreground" />
                 </div>;
             default:
-                return <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center">
-                    <Bell className="h-5 w-5 text-gray-600" />
+                return <div className="w-10 h-10 rounded-xl bg-foreground/5 flex items-center justify-center">
+                    <Bell className="h-5 w-5 text-foreground/60" />
                 </div>;
         }
     };
@@ -499,7 +501,7 @@ const NotificationsManagementPage = () => {
                                     </p>
 
                                     <div className="flex flex-wrap items-center gap-2">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(notification.status)}`}>
+                                        <span className={`px-3 py-1 rounded-full text-xs capitalize font-semibold border ${getStatusColor(notification.status)}`}>
                                             {notification.status}
                                         </span>
                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getTargetColor(notification.target)}`}>
@@ -508,9 +510,9 @@ const NotificationsManagementPage = () => {
                                         </span>
                                     </div>
                                 </div>
-                                <button className="p-2 hover:bg-foreground/5 rounded-lg transition-colors ml-2">
+                                {/* <button className="p-2 hover:bg-foreground/5 rounded-lg transition-colors ml-2">
                                     <MoreVertical className="w-5 h-5 text-foreground/40" />
-                                </button>
+                                </button> */}
                             </div>
 
                             {/* Stats */}
@@ -584,396 +586,22 @@ const NotificationsManagementPage = () => {
                 </div>
             )}
 
-            {/* Create Notification Modal */}
-            {createDialogOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-background rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-foreground/10">
-                        {/* Modal Header */}
-                        <div className="sticky top-0 bg-background border-b border-foreground/10 p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-foreground">Create New Notification</h2>
-                                    <p className="text-foreground/60 mt-1">Send custom notifications to users or user segments</p>
-                                </div>
-                                <button
-                                    onClick={() => {
-                                        setCreateDialogOpen(false);
-                                        resetForm();
-                                    }}
-                                    className="p-2 hover:bg-foreground/5 rounded-lg transition-colors"
-                                >
-                                    <X className="w-6 h-6 text-foreground/60" />
-                                </button>
-                            </div>
+            {/* Use the new modal components */}
+            <CreateNotificationModal
+                isOpen={createDialogOpen}
+                onClose={() => {
+                    setCreateDialogOpen(false);
+                    resetForm();
+                }}
+                onSubmit={handleCreateNotification}
+                onTestSend={handleSendTest}
+            />
 
-                            {/* Tabs */}
-                            <div className="flex gap-1 mt-6">
-                                <button
-                                    onClick={() => setActiveTab('content')}
-                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'content' ? 'bg-primary-dark text-background' : 'text-foreground/60 hover:text-foreground hover:bg-foreground/5'}`}
-                                >
-                                    Content
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('targeting')}
-                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'targeting' ? 'bg-primary-dark text-background' : 'text-foreground/60 hover:text-foreground hover:bg-foreground/5'}`}
-                                >
-                                    Targeting
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('settings')}
-                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'settings' ? 'bg-primary-dark text-background' : 'text-foreground/60 hover:text-foreground hover:bg-foreground/5'}`}
-                                >
-                                    Settings
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Modal Content */}
-                        <div className="p-6">
-                            {activeTab === 'content' && (
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-2">
-                                            Notification Title *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter notification title"
-                                            className="w-full px-4 py-3 bg-background border border-foreground/10 rounded-lg focus:ring-2 focus:ring-primary-dark/20 focus:border-primary-dark/50 transition-all outline-none"
-                                            value={newNotification.title}
-                                            onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value })}
-                                        />
-                                        <p className="text-sm text-foreground/60 mt-2">
-                                            This will appear as the notification title on user devices
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-2">
-                                            Message Content *
-                                        </label>
-                                        <textarea
-                                            placeholder="Enter your notification message..."
-                                            rows={4}
-                                            className="w-full px-4 py-3 bg-background border border-foreground/10 rounded-lg focus:ring-2 focus:ring-primary-dark/20 focus:border-primary-dark/50 transition-all outline-none resize-none"
-                                            value={newNotification.message}
-                                            onChange={(e) => setNewNotification({ ...newNotification, message: e.target.value })}
-                                        />
-                                        <div className="flex justify-between text-sm text-foreground/60 mt-2">
-                                            <span>Keep it concise for better engagement</span>
-                                            <span>{newNotification.message.length}/200 characters</span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-3">
-                                            Notification Type
-                                        </label>
-                                        <div className="grid grid-cols-3 gap-3">
-                                            <button
-                                                onClick={() => setNewNotification({ ...newNotification, type: 'push' })}
-                                                className={`p-4 border rounded-xl flex items-center gap-3 transition-all ${newNotification.type === 'push' ? 'border-primary-dark bg-primary-dark/5' : 'border-foreground/10 hover:border-foreground/20'}`}
-                                            >
-                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${newNotification.type === 'push' ? 'bg-primary-dark/10' : 'bg-foreground/5'}`}>
-                                                    <Bell className={`w-5 h-5 ${newNotification.type === 'push' ? 'text-primary-dark' : 'text-foreground/60'}`} />
-                                                </div>
-                                                <div className="text-left">
-                                                    <p className="font-medium text-foreground">Push Notification</p>
-                                                    <p className="text-sm text-foreground/60">Mobile & web push</p>
-                                                </div>
-                                            </button>
-                                            <button
-                                                onClick={() => setNewNotification({ ...newNotification, type: 'email' })}
-                                                className={`p-4 border rounded-xl flex items-center gap-3 transition-all ${newNotification.type === 'email' ? 'border-primary-dark bg-primary-dark/5' : 'border-foreground/10 hover:border-foreground/20'}`}
-                                            >
-                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${newNotification.type === 'email' ? 'bg-primary-dark/10' : 'bg-foreground/5'}`}>
-                                                    <Mail className={`w-5 h-5 ${newNotification.type === 'email' ? 'text-primary-dark' : 'text-foreground/60'}`} />
-                                                </div>
-                                                <div className="text-left">
-                                                    <p className="font-medium text-foreground">Email</p>
-                                                    <p className="text-sm text-foreground/60">Email notification</p>
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeTab === 'targeting' && (
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-2">
-                                            Select Target Audience
-                                        </label>
-                                        <Select
-                                            value={newNotification.targetType}
-                                            onValueChange={(value) => setNewNotification({ ...newNotification, targetType: value })}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Select target type" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="all">All Users</SelectItem>
-                                                <SelectItem value="segment">User Segment</SelectItem>
-                                                <SelectItem value="single">Single User</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-
-                                    {newNotification.targetType === 'segment' && (
-                                        <div>
-                                            <label className="block text-sm font-medium text-foreground mb-3">
-                                                Select User Segment
-                                            </label>
-                                            <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto p-1">
-                                                {userSegments.map((segment) => {
-                                                    const Icon = segment.icon;
-                                                    return (
-                                                        <div
-                                                            key={segment.id}
-                                                            className={`p-4 border rounded-lg cursor-pointer transition-all ${newNotification.selectedSegment === segment.id
-                                                                ? 'border-primary-dark bg-primary-dark/5'
-                                                                : 'border-foreground/10 hover:border-foreground/20 hover:bg-foreground/5'
-                                                                }`}
-                                                            onClick={() => setNewNotification({ ...newNotification, selectedSegment: segment.id })}
-                                                        >
-                                                            <div className="flex items-center justify-between">
-                                                                <div className="flex items-center gap-3">
-                                                                    <div className={`w-10 h-10 rounded-lg ${segment.color} flex items-center justify-center`}>
-                                                                        <Icon className="w-5 h-5 text-white" />
-                                                                    </div>
-                                                                    <div>
-                                                                        <h4 className="font-medium text-foreground">{segment.label}</h4>
-                                                                        <p className="text-sm text-foreground/60">{segment.count} users</p>
-                                                                    </div>
-                                                                </div>
-                                                                {newNotification.selectedSegment === segment.id && (
-                                                                    <CheckCircle className="w-5 h-5 text-primary-dark" />
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {newNotification.targetType === 'single' && (
-                                        <div>
-                                            <label className="block text-sm font-medium text-foreground mb-2">
-                                                Select User
-                                            </label>
-                                            <div className="flex gap-2">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Search user by name, email, or ID..."
-                                                    className="flex-1 px-4 py-3 bg-background border border-foreground/10 rounded-lg focus:ring-2 focus:ring-primary-dark/20 focus:border-primary-dark/50 transition-all outline-none"
-                                                    value={newNotification.selectedUser}
-                                                    onChange={(e) => setNewNotification({ ...newNotification, selectedUser: e.target.value })}
-                                                />
-                                                <button className="px-4 py-3 bg-background hover:bg-foreground/5 border border-foreground/10 rounded-lg text-sm font-medium transition-colors">
-                                                    Browse Users
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="p-4 bg-foreground/5 border border-foreground/10 rounded-lg">
-                                        <div className="flex items-start gap-3">
-                                            <AlertCircle className="w-5 h-5 text-foreground/60 mt-0.5" />
-                                            <div>
-                                                <p className="font-medium text-foreground">Target Information</p>
-                                                <p className="text-sm text-foreground/60 mt-1">
-                                                    {newNotification.targetType === 'all' && 'This notification will be sent to all 12,458 users.'}
-                                                    {newNotification.targetType === 'segment' && newNotification.selectedSegment &&
-                                                        `This notification will be sent to ${userSegments.find(s => s.id === newNotification.selectedSegment)?.count} users.`}
-                                                    {newNotification.targetType === 'single' && newNotification.selectedUser &&
-                                                        'This notification will be sent to the selected user only.'}
-                                                    {!newNotification.selectedSegment && newNotification.targetType === 'segment' &&
-                                                        'Please select a user segment.'}
-                                                    {!newNotification.selectedUser && newNotification.targetType === 'single' &&
-                                                        'Please select a user.'}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeTab === 'settings' && (
-                                <div className="space-y-6">
-                                    <div className="flex items-center justify-between p-4 border border-foreground/10 rounded-lg">
-                                        <div>
-                                            <p className="font-medium text-foreground">Schedule Notification</p>
-                                            <p className="text-sm text-foreground/60 mt-1">
-                                                Send at a specific time instead of immediately
-                                            </p>
-                                        </div>
-                                        <button
-                                            onClick={() => setNewNotification({ ...newNotification, scheduleSend: !newNotification.scheduleSend })}
-                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${newNotification.scheduleSend ? 'bg-primary-dark' : 'bg-foreground/20'}`}
-                                        >
-                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${newNotification.scheduleSend ? 'translate-x-6' : 'translate-x-1'}`} />
-                                        </button>
-                                    </div>
-
-                                    {newNotification.scheduleSend && (
-                                        <div>
-                                            <label className="block text-sm font-medium text-foreground mb-2">
-                                                Schedule Date & Time
-                                            </label>
-                                            <input
-                                                type="datetime-local"
-                                                className="w-full px-4 py-3 bg-background border border-foreground/10 rounded-lg focus:ring-2 focus:ring-primary-dark/20 focus:border-primary-dark/50 transition-all outline-none"
-                                                value={newNotification.scheduledTime}
-                                                onChange={(e) => setNewNotification({ ...newNotification, scheduledTime: e.target.value })}
-                                            />
-                                        </div>
-                                    )}
-
-                                    <div className="p-4 bg-foreground/5 border border-foreground/10 rounded-lg">
-                                        <div className="flex items-start gap-3">
-                                            <Clock className="w-5 h-5 text-foreground/60 mt-0.5" />
-                                            <div>
-                                                <p className="font-medium text-foreground">Sending Information</p>
-                                                <p className="text-sm text-foreground/60 mt-1">
-                                                    {newNotification.scheduleSend && newNotification.scheduledTime
-                                                        ? `Notification will be scheduled for ${new Date(newNotification.scheduledTime).toLocaleString()}`
-                                                        : 'Notification will be sent immediately upon creation'}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Footer Actions */}
-                            <div className="flex items-center justify-between pt-6 mt-6 border-t border-foreground/10">
-                                <button
-                                    onClick={handleSendTest}
-                                    className="px-4 py-2 bg-background hover:bg-foreground/5 border border-foreground/10 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                                >
-                                    <Bell className="w-4 h-4" />
-                                    Send Test
-                                </button>
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={() => {
-                                            setCreateDialogOpen(false);
-                                            resetForm();
-                                        }}
-                                        className="px-6 py-2 border-2 border-foreground/10 text-foreground rounded-lg hover:bg-foreground/5 transition-colors font-medium"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleCreateNotification}
-                                        disabled={!newNotification.title || !newNotification.message}
-                                        className="px-6 py-2 bg-primary-dark text-background rounded-lg hover:bg-primary-dark/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center gap-2"
-                                    >
-                                        <Send className="w-4 h-4" />
-                                        Create & Send
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Notification Preview Modal */}
-            {previewDialogOpen && selectedNotification && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-background rounded-xl max-w-md w-full border border-foreground/10">
-                        {/* Modal Header */}
-                        <div className="sticky top-0 bg-background border-b border-foreground/10 p-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    {getTypeIcon(selectedNotification.type)}
-                                    <div>
-                                        <h2 className="text-xl font-bold text-foreground">Notification Preview</h2>
-                                        <p className="text-sm text-foreground/60">Sent {formatDate(selectedNotification.sentDate)}</p>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => setPreviewDialogOpen(false)}
-                                    className="p-2 hover:bg-foreground/5 rounded-lg transition-colors"
-                                >
-                                    <X className="w-6 h-6 text-foreground/60" />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Modal Content */}
-                        <div className="p-6">
-                            <div className="space-y-6">
-                                {/* Notification Preview */}
-                                <div className="p-4 bg-foreground/5 border border-foreground/10 rounded-lg">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <Bell className="w-4 h-4 text-foreground/60" />
-                                        <span className="text-sm font-medium text-foreground">Push Notification Preview</span>
-                                    </div>
-                                    <div className="bg-white p-4 rounded-lg border border-foreground/10">
-                                        <h3 className="font-bold text-foreground mb-2">{selectedNotification.title}</h3>
-                                        <p className="text-foreground/60 text-sm">{selectedNotification.message}</p>
-                                    </div>
-                                </div>
-
-                                {/* Details Grid */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground/60 mb-1">Type</p>
-                                        <p className="text-foreground capitalize">{selectedNotification.type}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground/60 mb-1">Target</p>
-                                        <p className="text-foreground capitalize">{selectedNotification.target}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground/60 mb-1">Status</p>
-                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(selectedNotification.status)}`}>
-                                            {selectedNotification.status}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground/60 mb-1">Delivery Rate</p>
-                                        <p className="text-foreground">{selectedNotification.deliveryRate}</p>
-                                    </div>
-                                </div>
-
-                                {/* Recipients */}
-                                <div>
-                                    <p className="text-sm font-medium text-foreground/60 mb-1">Recipients</p>
-                                    <p className="text-foreground">{selectedNotification.recipients}</p>
-                                </div>
-
-                                {/* Stats */}
-                                <div className="grid grid-cols-2 gap-4 p-4 bg-foreground/5 rounded-lg">
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground/60 mb-1">Open Rate</p>
-                                        <p className="text-xl font-bold text-foreground">{selectedNotification.openRate}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground/60 mb-1">Total Clicks</p>
-                                        <p className="text-xl font-bold text-foreground">{selectedNotification.clicks}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Modal Footer */}
-                        <div className="p-6 border-t border-foreground/10">
-                            <button
-                                onClick={() => setPreviewDialogOpen(false)}
-                                className="w-full py-3 border-2 border-foreground/10 text-foreground rounded-lg hover:bg-foreground/5 transition-colors font-medium"
-                            >
-                                Close Preview
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <NotificationPreviewModal
+                isOpen={previewDialogOpen}
+                onClose={() => setPreviewDialogOpen(false)}
+                notification={selectedNotification}
+            />
         </div>
     );
 };
