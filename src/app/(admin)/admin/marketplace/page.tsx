@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import MetricsSlider from "@/components/admin/MetricsSlider";
+import MetricsSlider from "@/components/addons/MetricsSlider";
 import { Search, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import CastingCallTable from '@/components/marketplace/CastingCallTable';

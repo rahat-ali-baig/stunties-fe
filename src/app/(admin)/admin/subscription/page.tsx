@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import MetricsSlider from '@/components/admin/MetricsSlider';
+import MetricsSlider from '@/components/addons/MetricsSlider';
 import SubscriptionTable from '@/components/Subscription/SubscriptionTable';
 import { subscriptionMetricCards } from '@/constants';
 

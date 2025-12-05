@@ -1,25 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { Search, X, Filter, Download, Eye, MoreHorizontal, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Pagination from '@/components/addons/Pagination';
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { categoryOptions, dateRangeOptions, priceRangeOptions, productStatusOptions, sampleProducts, stockOptions } from '@/constants';
+import { useState, useMemo } from 'react';
+import { Search, X, Download, Eye, MoreHorizontal, Edit, Trash2, Image as ImageIcon, Plus } from 'lucide-react';
+import PrimaryButton from '@/components/addons/PrimaryButton';
+import CustomSelect from '@/components/addons/CustomSelect';
+import CustomTable, { Column } from '@/components/addons/CustomTable';
+import MetricsSlider from '@/components/addons/MetricsSlider';
+import { categoryOptions, dateRangeOptions, priceRangeOptions, productMetricesData, productStatusOptions, sampleProducts, stockOptions } from '@/constants';
+import { MdDeleteOutline } from 'react-icons/md';
 
 interface Product {
     id: string;
@@ -35,7 +23,6 @@ interface Product {
 }
 
 const ProductsPage = () => {
-    // State
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         category: 'all-categories',
@@ -47,16 +34,8 @@ const ProductsPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    // Calculate pagination values
-    const totalProducts = sampleProducts.length;
-    const totalPages = Math.ceil(totalProducts / rowsPerPage);
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = Math.min(startIndex + rowsPerPage, totalProducts);
-
-    // Filter products based on search and filter criteria
     const filteredProducts = useMemo(() => {
         return sampleProducts.filter((product) => {
-            // Search filter
             if (searchTerm &&
                 !product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
                 !product.sku.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -64,19 +43,16 @@ const ProductsPage = () => {
                 return false;
             }
 
-            // Category filter
             if (filters.category !== 'all-categories' &&
                 product.category.toLowerCase() !== filters.category) {
                 return false;
             }
 
-            // Status filter
             if (filters.status !== 'all-status' &&
                 product.status.toLowerCase().replace(/ /g, '-') !== filters.status) {
                 return false;
             }
 
-            // Stock filter
             if (filters.stock !== 'all-stock') {
                 switch (filters.stock) {
                     case 'in-stock':
@@ -91,7 +67,6 @@ const ProductsPage = () => {
                 }
             }
 
-            // Price range filter
             const price = parseFloat(product.price.replace('$', '').replace(',', ''));
             if (filters.priceRange !== 'all-prices') {
                 switch (filters.priceRange) {
@@ -110,15 +85,10 @@ const ProductsPage = () => {
                 }
             }
 
-            // Date range filter would be implemented with actual date comparisons
             return true;
         });
     }, [searchTerm, filters]);
 
-    // Get current page products
-    const currentProducts = filteredProducts.slice(startIndex, endIndex);
-
-    // Status badge colors
     const getStatusBadge = (status: string) => {
         const statusMap: any = {
             'Active': { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
@@ -130,18 +100,6 @@ const ProductsPage = () => {
         return statusMap[status] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200' };
     };
 
-    // Stock badge colors
-    const getStockBadge = (stock: number) => {
-        if (stock === 0) {
-            return { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200', label: 'Out of Stock' };
-        } else if (stock < 10) {
-            return { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', label: 'Low Stock' };
-        } else {
-            return { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', label: 'In Stock' };
-        }
-    };
-
-    // Category badge colors
     const getCategoryBadge = (category: string) => {
         const categoryMap: any = {
             'Electronics': { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
@@ -154,8 +112,141 @@ const ProductsPage = () => {
         return categoryMap[category] || { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200' };
     };
 
-    const handlePageChange = (page: number) => setCurrentPage(page);
-    const handleRowsPerPageChange = (value: number) => {
+    const columns: Column<Product>[] = [
+        {
+            key: 'image',
+            title: 'Image',
+            width: 80,
+            render: (_, record) => (
+                <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
+                    {record.image ? (
+                        <img
+                            src={record.image}
+                            alt={record.name}
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                            <ImageIcon className="w-6 h-6 text-gray-400" />
+                        </div>
+                    )}
+                </div>
+            ),
+        },
+        {
+            key: 'name',
+            title: 'Product Name',
+            dataIndex: 'name',
+            sortable: true,
+            sorter: (a, b) => a.name.localeCompare(b.name),
+        },
+        {
+            key: 'category',
+            title: 'Category',
+            dataIndex: 'category',
+            sortable: true,
+            sorter: (a, b) => a.category.localeCompare(b.category),
+            render: (category) => {
+                const badge = getCategoryBadge(category);
+                return (
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${badge.bg} ${badge.text} border ${badge.border}`}>
+                        {category}
+                    </span>
+                );
+            },
+        },
+        {
+            key: 'price',
+            title: 'Price',
+            dataIndex: 'price',
+            sortable: true,
+            sorter: (a, b) => {
+                const priceA = parseFloat(a.price.replace('$', '').replace(',', ''));
+                const priceB = parseFloat(b.price.replace('$', '').replace(',', ''));
+                return priceA - priceB;
+            },
+            render: (price) => (
+                <span className="font-semibold text-emerald-600">{price}</span>
+            ),
+        },
+        {
+            key: 'stock',
+            title: 'Stock',
+            dataIndex: 'stock',
+            sortable: true,
+            sorter: (a, b) => a.stock - b.stock,
+            render: (stock) => (
+                <span className="text-sm text-foreground/70">
+                    {stock} units
+                </span>
+            ),
+        },
+        {
+            key: 'status',
+            title: 'Status',
+            dataIndex: 'status',
+            sortable: true,
+            sorter: (a, b) => a.status.localeCompare(b.status),
+            render: (status) => {
+                const badge = getStatusBadge(status);
+                return (
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${badge.bg} ${badge.text} border ${badge.border}`}>
+                        {status}
+                    </span>
+                );
+            },
+        },
+        {
+            key: 'addedOn',
+            title: 'Added On',
+            dataIndex: 'addedOn',
+            sortable: true,
+            sorter: (a, b) => new Date(a.addedOn).getTime() - new Date(b.addedOn).getTime(),
+        },
+    ];
+
+    const customActions = (record: Product) => {
+        const handleEditProduct = () => console.log('Edit product:', record);
+        const handleDeleteProduct = () => {
+            if (confirm(`Delete product "${record.name}"?`)) {
+                console.log('Product deleted');
+            }
+        };
+
+        return (
+            <div className="flex items-center justify-end gap-1">
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditProduct();
+                    }}
+                    className="p-1.5 text-foreground/60 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                    title="Edit"
+                >
+                    <Edit className="w-4 h-4" />
+                </button>
+
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteProduct();
+                    }}
+                    className="p-1.5 text-foreground/60 hover:text-primary-dark hover:bg-primary-dark/5 rounded transition-colors"
+                    title="View"
+                >
+                    <MdDeleteOutline className="w-4 h-4" />
+                </button>
+
+            </div>
+        );
+    };
+
+    const handlePageChange = (page: number, pageSize: number) => {
+        setCurrentPage(page);
+        setRowsPerPage(pageSize);
+    };
+
+    const handlePageSizeChange = (value: number) => {
         setRowsPerPage(value);
         setCurrentPage(1);
     };
@@ -169,29 +260,7 @@ const ProductsPage = () => {
             dateRange: 'all-time'
         });
         setSearchTerm('');
-    };
-
-    const handleExport = () => {
-        console.log('Exporting product data...');
-        // Export functionality would go here
-    };
-
-    const handleViewProduct = (product: Product) => {
-        console.log('View product:', product);
-        // Navigate to product detail page or open modal
-    };
-
-    const handleEditProduct = (product: Product) => {
-        console.log('Edit product:', product);
-        // Open edit modal
-    };
-
-    const handleDeleteProduct = (product: Product) => {
-        console.log('Delete product:', product);
-        // Show delete confirmation
-        if (confirm(`Delete product "${product.name}"? This action cannot be undone.`)) {
-            console.log('Product deleted');
-        }
+        setCurrentPage(1);
     };
 
     const hasActiveFilters = Object.values(filters).some(value =>
@@ -204,16 +273,34 @@ const ProductsPage = () => {
 
     return (
         <div className="h-[calc(100dvh-120px)] w-full overflow-y-auto p-4">
-            {/* Search and Filter Section */}
-            <div className="bg-white border border-foreground/10 rounded-xl p-6 mb-8">
+            {/* Top Section */}
+            <div className="mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h1 className="text-2xl font-semibold text-foreground">Products</h1>
+                        <p className="text-sm text-foreground/60 mt-1">
+                            Manage your shop products, inventory, and pricing
+                        </p>
+                    </div>
+
+                    <PrimaryButton
+                        variant="primary"
+                        icon={Plus}
+                        onClick={() => console.log('Add new product')}
+                        className="whitespace-nowrap"
+                    >
+                        Add Product
+                    </PrimaryButton>
+                </div>
+
                 {/* Search Bar */}
-                <div className="mb-6">
-                    <div className="max-w-lg relative">
+                <div className="max-w-lg">
+                    <div className="relative">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/60" />
                         <input
                             type="text"
                             placeholder="Search by product name, SKU, category..."
-                            className="w-full h-12 pl-12 pr-4 bg-background border border-foreground/30 rounded-xl text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary-dark focus:border-primary-dark transition-all"
+                            className="w-full h-10 pl-10 pr-2 text-sm bg-background border border-foreground/30 rounded-xl text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary-dark focus:border-primary-dark transition-all"
                             value={searchTerm}
                             onChange={(e) => {
                                 setSearchTerm(e.target.value);
@@ -222,7 +309,15 @@ const ProductsPage = () => {
                         />
                     </div>
                 </div>
+            </div>
 
+            {/* Metrics Slider */}
+            <div className="mb-8">
+                <MetricsSlider cards={productMetricesData} />
+            </div>
+
+            {/* Filters Section */}
+            <div className="mb-8">
                 {/* Filters Row */}
                 <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
                     <div className="text-sm text-foreground/60">Filters:</div>
@@ -230,113 +325,68 @@ const ProductsPage = () => {
                     <div className="flex flex-wrap gap-3">
                         {/* Category Filter */}
                         <div className="min-w-[140px]">
-                            <Select
+                            <CustomSelect
                                 value={filters.category}
-                                onValueChange={(value) => setFilters({ ...filters, category: value })}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {categoryOptions.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                onChange={(value: any) => {
+                                    setFilters({ ...filters, category: value });
+                                    setCurrentPage(1);
+                                }}
+                                options={categoryOptions}
+                                placeholder="Category"
+                            />
                         </div>
 
                         {/* Status Filter */}
                         <div className="min-w-[140px]">
-                            <Select
+                            <CustomSelect
                                 value={filters.status}
-                                onValueChange={(value) => setFilters({ ...filters, status: value })}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {productStatusOptions.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                onChange={(value: any) => {
+                                    setFilters({ ...filters, status: value });
+                                    setCurrentPage(1);
+                                }}
+                                options={productStatusOptions}
+                                placeholder="Status"
+                            />
                         </div>
 
                         {/* Stock Filter */}
                         <div className="min-w-[140px]">
-                            <Select
+                            <CustomSelect
                                 value={filters.stock}
-                                onValueChange={(value) => setFilters({ ...filters, stock: value })}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Stock" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {stockOptions.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                onChange={(value: any) => {
+                                    setFilters({ ...filters, stock: value });
+                                    setCurrentPage(1);
+                                }}
+                                options={stockOptions}
+                                placeholder="Stock"
+                            />
                         </div>
 
                         {/* Price Range Filter */}
                         <div className="min-w-[140px]">
-                            <Select
+                            <CustomSelect
                                 value={filters.priceRange}
-                                onValueChange={(value) => setFilters({ ...filters, priceRange: value })}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Price Range" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {priceRangeOptions.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                onChange={(value: any) => {
+                                    setFilters({ ...filters, priceRange: value });
+                                    setCurrentPage(1);
+                                }}
+                                options={priceRangeOptions}
+                                placeholder="Price Range"
+                            />
                         </div>
 
                         {/* Date Range Filter */}
                         <div className="min-w-[140px]">
-                            <Select
+                            <CustomSelect
                                 value={filters.dateRange}
-                                onValueChange={(value) => setFilters({ ...filters, dateRange: value })}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Date Added" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {dateRangeOptions.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                onChange={(value: any) => {
+                                    setFilters({ ...filters, dateRange: value });
+                                    setCurrentPage(1);
+                                }}
+                                options={dateRangeOptions}
+                                placeholder="Date Added"
+                            />
                         </div>
-                    </div>
-
-                    {/* Export and Add New Buttons */}
-                    <div className="ml-auto flex gap-2">
-                        <Button
-                            onClick={handleExport}
-                            variant="outline"
-                            className="gap-2 cursor-pointer"
-                        >
-                            <Download className="w-4 h-4" />
-                            Export
-                        </Button>
-                        <Button className="bg-primary-dark hover:bg-primary-dark/90 text-white">
-                            + Add New Product
-                        </Button>
                     </div>
                 </div>
 
@@ -349,8 +399,11 @@ const ProductsPage = () => {
                                 <div className="inline-flex items-center gap-1 px-3 py-1 bg-primary-dark/5 text-primary-dark rounded-full text-sm border border-primary-dark/10">
                                     Category: {categoryOptions.find(opt => opt.value === filters.category)?.label}
                                     <button
-                                        onClick={() => setFilters({ ...filters, category: 'all-categories' })}
-                                        className="hover:text-primary-dark/60"
+                                        onClick={() => {
+                                            setFilters({ ...filters, category: 'all-categories' });
+                                            setCurrentPage(1);
+                                        }}
+                                        className="hover:text-primary-dark/60 ml-1"
                                     >
                                         <X className="w-3 h-3" />
                                     </button>
@@ -361,8 +414,11 @@ const ProductsPage = () => {
                                 <div className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full text-sm border border-emerald-200">
                                     Status: {productStatusOptions.find(opt => opt.value === filters.status)?.label}
                                     <button
-                                        onClick={() => setFilters({ ...filters, status: 'all-status' })}
-                                        className="hover:text-emerald-900"
+                                        onClick={() => {
+                                            setFilters({ ...filters, status: 'all-status' });
+                                            setCurrentPage(1);
+                                        }}
+                                        className="hover:text-emerald-900 ml-1"
                                     >
                                         <X className="w-3 h-3" />
                                     </button>
@@ -373,8 +429,11 @@ const ProductsPage = () => {
                                 <div className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-800 rounded-full text-sm border border-blue-200">
                                     Stock: {stockOptions.find(opt => opt.value === filters.stock)?.label}
                                     <button
-                                        onClick={() => setFilters({ ...filters, stock: 'all-stock' })}
-                                        className="hover:text-blue-900"
+                                        onClick={() => {
+                                            setFilters({ ...filters, stock: 'all-stock' });
+                                            setCurrentPage(1);
+                                        }}
+                                        className="hover:text-blue-900 ml-1"
                                     >
                                         <X className="w-3 h-3" />
                                     </button>
@@ -385,8 +444,11 @@ const ProductsPage = () => {
                                 <div className="inline-flex items-center gap-1 px-3 py-1 bg-purple-50 text-purple-800 rounded-full text-sm border border-purple-200">
                                     Price: {priceRangeOptions.find(opt => opt.value === filters.priceRange)?.label}
                                     <button
-                                        onClick={() => setFilters({ ...filters, priceRange: 'all-prices' })}
-                                        className="hover:text-purple-900"
+                                        onClick={() => {
+                                            setFilters({ ...filters, priceRange: 'all-prices' });
+                                            setCurrentPage(1);
+                                        }}
+                                        className="hover:text-purple-900 ml-1"
                                     >
                                         <X className="w-3 h-3" />
                                     </button>
@@ -403,210 +465,34 @@ const ProductsPage = () => {
                 )}
             </div>
 
-            {/* Product Table */}
-            <div className="bg-white border border-foreground/10 rounded-xl overflow-hidden">
-                <div className="p-4 border-b border-foreground/10 flex justify-between items-center">
-                    <div className="text-sm font-medium text-foreground/70">
-                        Showing {startIndex + 1} to {endIndex} of {filteredProducts.length} products
+            <CustomTable<Product>
+                data={filteredProducts}
+                columns={columns}
+                rowKey="id"
+                pagination={true}
+                showPagination={true}
+                pageSize={rowsPerPage}
+                pageSizeOptions={[6, 12, 50, 100]}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+                current={currentPage}
+                total={filteredProducts.length}
+                customActions={customActions}
+                bordered
+                size="middle"
+                emptyText={
+                    <div className="flex flex-col items-center justify-center py-12 gap-4">
+                        <div className="text-foreground/60">No products found</div>
+                        <PrimaryButton
+                            onClick={clearAllFilters}
+                            variant="primary"
+                            size="sm"
+                        >
+                            Clear All Filters
+                        </PrimaryButton>
                     </div>
-                    <div className="text-lg font-semibold text-foreground">
-                        {filteredProducts.length} Products
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="bg-primary-dark/5">
-                                <TableHead className="font-semibold text-foreground py-4">Image</TableHead>
-                                <TableHead className="font-semibold text-foreground py-4">Product Name</TableHead>
-                                <TableHead className="font-semibold text-foreground py-4">SKU</TableHead>
-                                <TableHead className="font-semibold text-foreground py-4">Category</TableHead>
-                                <TableHead className="font-semibold text-foreground py-4">Price</TableHead>
-                                <TableHead className="font-semibold text-foreground py-4">Stock</TableHead>
-                                <TableHead className="font-semibold text-foreground py-4">Status</TableHead>
-                                <TableHead className="font-semibold text-foreground py-4">Added On</TableHead>
-                                <TableHead className="font-semibold text-foreground py-4 text-right">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {currentProducts.length > 0 ? (
-                                currentProducts.map((product) => {
-                                    const statusBadge = getStatusBadge(product.status);
-                                    const stockBadge = getStockBadge(product.stock);
-                                    const categoryBadge = getCategoryBadge(product.category);
-
-                                    return (
-                                        <TableRow
-                                            key={product.id}
-                                            className="border-foreground/10 hover:bg-primary/5 transition-colors"
-                                        >
-                                            {/* Image */}
-                                            <TableCell>
-                                                <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
-                                                    {product.image ? (
-                                                        <img
-                                                            src={product.image}
-                                                            alt={product.name}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center">
-                                                            <ImageIcon className="w-6 h-6 text-gray-400" />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-
-                                            {/* Product Name */}
-                                            <TableCell>
-                                                <div className="flex flex-col">
-                                                    <div className="font-medium text-foreground">{product.name}</div>
-                                                    <div className="text-sm text-foreground/60 line-clamp-1">
-                                                        {product.description}
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-
-                                            {/* SKU */}
-                                            <TableCell className="font-mono text-sm text-foreground/70">
-                                                {product.sku}
-                                            </TableCell>
-
-                                            {/* Category */}
-                                            <TableCell>
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${categoryBadge.bg} ${categoryBadge.text} border ${categoryBadge.border}`}>
-                                                    {product.category}
-                                                </span>
-                                            </TableCell>
-
-                                            {/* Price */}
-                                            <TableCell className="font-semibold text-emerald-600">
-                                                {product.price}
-                                            </TableCell>
-
-                                            {/* Stock */}
-                                            <TableCell>
-                                                <div className="flex flex-col gap-1">
-                                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${stockBadge.bg} ${stockBadge.text} border ${stockBadge.border}`}>
-                                                        {stockBadge.label}
-                                                    </span>
-                                                    <span className="text-sm text-foreground/70">
-                                                        {product.stock} units
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-
-                                            {/* Status */}
-                                            <TableCell>
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusBadge.bg} ${statusBadge.text} border ${statusBadge.border}`}>
-                                                    {product.status}
-                                                </span>
-                                            </TableCell>
-
-                                            {/* Added On */}
-                                            <TableCell className="text-sm text-foreground/70">
-                                                {product.addedOn}
-                                            </TableCell>
-
-                                            {/* Actions */}
-                                            <TableCell className="text-right py-4">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleViewProduct(product);
-                                                        }}
-                                                        className="p-1.5 text-foreground/60 hover:text-primary-dark hover:bg-primary-dark/5 rounded transition-colors"
-                                                        title="View"
-                                                    >
-                                                        <Eye className="w-4 h-4" />
-                                                    </button>
-
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleEditProduct(product);
-                                                        }}
-                                                        className="p-1.5 text-foreground/60 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                                                        title="Edit"
-                                                    >
-                                                        <Edit className="w-4 h-4" />
-                                                    </button>
-
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <button
-                                                                onClick={(e) => e.stopPropagation()}
-                                                                className="p-1.5 text-foreground/60 hover:text-primary-dark hover:bg-primary-dark/5 rounded transition-colors"
-                                                            >
-                                                                <MoreHorizontal className="w-4 h-4" />
-                                                            </button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem onClick={() => handleViewProduct(product)}>
-                                                                <Eye className="w-4 h-4 mr-2" />
-                                                                View Details
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => handleEditProduct(product)}>
-                                                                <Edit className="w-4 h-4 mr-2" />
-                                                                Edit Product
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem>
-                                                                Duplicate Product
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem>
-                                                                Update Inventory
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem
-                                                                onClick={() => handleDeleteProduct(product)}
-                                                                className="text-rose-600"
-                                                            >
-                                                                <Trash2 className="w-4 h-4 mr-2" />
-                                                                Delete Product
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={9} className="text-center py-12">
-                                        <div className="flex flex-col items-center gap-3">
-                                            <div className="text-foreground/60">No products found</div>
-                                            <button
-                                                onClick={clearAllFilters}
-                                                className="px-6 py-2 bg-black text-white rounded-lg hover:bg-primary-dark transition-colors text-sm"
-                                            >
-                                                Clear All Filters
-                                            </button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-            </div>
-
-            {/* Pagination */}
-            {filteredProducts.length > 0 && (
-                <div className="mt-6">
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        rowsPerPage={rowsPerPage}
-                        totalUsers={filteredProducts.length}
-                        startIndex={startIndex}
-                        endIndex={endIndex}
-                        onPageChange={handlePageChange}
-                        onRowsPerPageChange={handleRowsPerPageChange}
-                    />
-                </div>
-            )}
+                }
+            />
         </div>
     );
 };

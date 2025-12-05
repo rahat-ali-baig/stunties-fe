@@ -25,7 +25,7 @@ const DashboardLayout = ({ children, userRole }: DashboardLayoutProps) => {
       <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} userRole={userRole} />
 
       <div className={`${!isSidebarOpen ? 'w-[calc(100%-64px)]' : 'w-[calc(100%-256px)]'} transition-all duration-300 h-screen overflow-hidden top-0 right-0 flex flex-col`}>
-        <Navbar userRole={userRole} />
+        <Navbar />
         
         <div className="w-full pb-5 grow">
           <div 

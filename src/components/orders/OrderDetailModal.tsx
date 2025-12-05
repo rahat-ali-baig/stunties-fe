@@ -338,7 +338,7 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ isOpen, onClose, or
                             {order.timeline.map((event, index) => (
                                 <div key={event.id} className="relative pl-8">
                                     {index < order.timeline.length - 1 && (
-                                        <div className="absolute left-[15px] top-[20px] bottom-[-28px] w-0.5 bg-gray-200" />
+                                        <div className="absolute left-[15px] top-5 -bottom-7 w-0.5 bg-gray-200" />
                                     )}
                                     <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-primary-dark/10 flex items-center justify-center">
                                         <div className="w-2 h-2 rounded-full bg-primary-dark" />
@@ -400,7 +400,6 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ isOpen, onClose, or
                 </div>
             )}
 
-            {/* Status Update Section (Always visible) */}
             <div className="mt-8 pt-6 border-t border-gray-100">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">

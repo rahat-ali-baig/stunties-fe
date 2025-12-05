@@ -18,6 +18,10 @@ interface PaginationProps {
   endIndex: number;
   onPageChange: (page: number) => void;
   onRowsPerPageChange: (value: number) => void;
+  pageSizeOptions?: number[];
+  showPageSizeSelector?: boolean;
+  showTotalCount?: boolean;
+  className?: string;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -29,6 +33,10 @@ const Pagination: React.FC<PaginationProps> = ({
   endIndex,
   onPageChange,
   onRowsPerPageChange,
+  pageSizeOptions = [5, 10, 20, 50],
+  showPageSizeSelector = true,
+  showTotalCount = true,
+  className = "",
 }) => {
   const customStyles = {
     control: (provided: any) => ({
@@ -106,34 +114,37 @@ const Pagination: React.FC<PaginationProps> = ({
   const handleNextPage = () => currentPage < totalPages && onPageChange(currentPage + 1);
 
   return (
-    <div className="flex items-center justify-between pt-4">
+    <div className={`flex items-center justify-between pt-4 ${className}`}>
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-foreground/60">Rows per page:</span>
-          <div className="w-20">
-            <Select
-              options={[
-                { value: 5, label: "5" },
-                { value: 10, label: "10" },
-                { value: 20, label: "20" },
-                { value: 50, label: "50" },
-              ]}
-              value={{ value: rowsPerPage, label: rowsPerPage.toString() }}
-              onChange={(selectedOption) => onRowsPerPageChange(selectedOption?.value || 10)}
-              isSearchable={false}
-              styles={customStyles}
-              menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
-              menuPlacement="top"
-              components={{
-                IndicatorSeparator: () => null,
-              }}
-              classNamePrefix="react-select"
-            />
+        {showPageSizeSelector && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-foreground/60">Rows per page:</span>
+            <div className="w-20">
+              <Select
+                options={pageSizeOptions.map(option => ({
+                  value: option,
+                  label: option.toString(),
+                }))}
+                value={{ value: rowsPerPage, label: rowsPerPage.toString() }}
+                onChange={(selectedOption) => onRowsPerPageChange(selectedOption?.value || 10)}
+                isSearchable={false}
+                styles={customStyles}
+                menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+                menuPlacement="top"
+                components={{
+                  IndicatorSeparator: () => null,
+                }}
+                classNamePrefix="react-select"
+              />
+            </div>
           </div>
-        </div>
-        <span className="text-sm text-foreground/60">
-          {startIndex + 1} - {endIndex} of {totalUsers}
-        </span>
+        )}
+        
+        {showTotalCount && (
+          <span className="text-sm text-foreground/60">
+            {startIndex + 1} - {endIndex} of {totalUsers}
+          </span>
+        )}
       </div>
 
       <div className="flex items-center gap-1">

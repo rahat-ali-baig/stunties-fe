@@ -1,6 +1,8 @@
-import { Eye, Heart, Star, Download, Users, TrendingUp, CheckCircle, Package, DollarSign, Clock, Zap, Activity, UserCheck, Target, Award, CreditCard, ShoppingBag, Trophy, LineChart, Calendar, Video, XCircle, FolderOpen, List, AlertCircle, FileText, TrendingDown, RefreshCw } from "lucide-react";
-import { FaEye, FaUser } from "react-icons/fa";
+import { Heart, Star, Download, Users, TrendingUp, CheckCircle, Package, DollarSign, Clock, Zap, Activity, UserCheck, Target, Award, CreditCard, ShoppingBag, Trophy, LineChart, Calendar, Video, XCircle, FolderOpen, List, AlertCircle, FileText, TrendingDown, RefreshCw } from "lucide-react";
+import { FaEye } from "react-icons/fa";
 import { MdOutlineWorkOutline } from "react-icons/md";
+import { BsBoxSeam } from "react-icons/bs";
+import { IoCloseCircleOutline, IoWarningOutline } from "react-icons/io5";
 
 interface UserGrowthData {
     month: string;
@@ -18,6 +20,61 @@ interface UserGrowthChartProps {
     growthData?: UserGrowthData[];
     distributionData?: UserDistributionData[];
 }
+
+export const pageConfigs: Record<string, { title: string; description: string }> = {
+    '/admin': {
+        title: 'Dashboard',
+        description: 'All your tools, insights, and progress in one place'
+    },
+    '/admin/users': {
+        title: 'User Management',
+        description: 'Manage user accounts and permissions'
+    },
+    '/admin/user-verifications': {
+        title: 'User Verification',
+        description: 'Approve or reject user verification requests'
+    },
+    '/admin/marketplace': {
+        title: 'Jobs & Marketplace',
+        description: 'Manage gigs and casting calls.'
+    },
+    '/admin/orders': {
+        title: 'Orders & Delivery',
+        description: 'Track and manage orders and delivery status'
+    },
+    '/admin/wallet': {
+        title: 'Wallet',
+        description: 'Manage payments, payouts, and financial transactions'
+    },
+    '/admin/subscription': {
+        title: 'Subscription',
+        description: 'Handle subscription plans and profile boosts'
+    },
+    '/admin/notifications': {
+        title: 'Notifications',
+        description: 'Configure and manage system notifications'
+    },
+    '/admin/shop/products': {
+        title: 'Shop',
+        description: 'Manage your Stunties Store'
+    },
+    '/admin/shop/categories': {
+        title: 'Shop',
+        description: 'Manage your Stunties Store'
+    },
+    '/admin/shop/orders': {
+        title: 'Shop',
+        description: 'Manage your Stunties Store'
+    },
+    '/admin/shop/customers': {
+        title: 'Shop',
+        description: 'Manage your Stunties Store'
+    },
+    '/admin/settings': {
+        title: 'Profile Settings',
+        description: 'Manage your account information and security settings'
+    },
+};
 
 export const dashboardMetricCards = [
     {
@@ -980,4 +1037,22 @@ export const dateRangeOptions = [
     { value: 'last-30-days', label: 'Last 30 Days' },
     { value: 'this-month', label: 'This Month' },
     { value: 'last-month', label: 'Last Month' }
+];
+
+export const productMetricesData = [
+    {
+        title: "Total Products",
+        value: "24,234",
+        icon: BsBoxSeam,
+    },
+    {
+        title: "Low Stock Items",
+        value: "12",
+        icon: IoWarningOutline,
+    },
+    {
+        title: "Out of Stock",
+        value: "2",
+        icon: IoCloseCircleOutline,
+    }
 ];

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import MetricsSlider from "@/components/admin/MetricsSlider";
+import MetricsSlider from "@/components/addons/MetricsSlider";
 import { userCards } from "@/constants";
 import { RiUserSmileFill } from "react-icons/ri";
 import PageHeader from "@/components/addons/PageHeader";

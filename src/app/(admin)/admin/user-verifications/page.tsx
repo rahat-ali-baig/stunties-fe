@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
-import MetricsSlider from "@/components/admin/MetricsSlider";
+import MetricsSlider from "@/components/addons/MetricsSlider";
 import VerificationTabs from "@/components/verifications/VerificationTabs";
 import SearchBar from "@/components/verifications/SearchBar";
 import VerificationTable from "@/components/verifications/VerificationTable";

@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import StatsCard from "../addons/StatsCard";
+import StatsCard from "./StatsCard";
 import { GrNext, GrPrevious } from "react-icons/gr";
 
 interface MetricCard {

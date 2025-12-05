@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import MetricsSlider from "@/components/admin/MetricsSlider";
+import MetricsSlider from "@/components/addons/MetricsSlider";
 import { Search, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import OrdersTable from '@/components/orders/OrdersTable';
-import OrderDetailModal from './OrderDetailModal';
+import OrderDetailModal from '../../../../components/orders/OrderDetailModal';
 import { ordersStats } from '@/constants'; // We'll add this to constants
 import { orders, timeRangeOptions, statusOptions, amountRangeOptions } from '@/constants'; // We'll add these
 
@@ -111,7 +111,7 @@ const OrdersManagement = () => {
         <MetricsSlider cards={ordersStats} />
       </div>
 
-      {/* Search and Filter Section */}
+      {/* Search Section */}
       <div className="mb-8">
         {/* Search Bar */}
         <div className="mb-6">

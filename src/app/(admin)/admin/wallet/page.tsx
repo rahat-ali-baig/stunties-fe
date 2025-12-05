@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import AlertBanner from "@/components/addons/AlertBanner";
-import MetricsSlider from "@/components/admin/MetricsSlider";
+import MetricsSlider from "@/components/addons/MetricsSlider";
 import { earningsMetricCards } from "@/constants";
 import EarningsChart from "@/components/admin/EarningsChart";
 import EarningTable from "@/components/earning/EarningTable";
